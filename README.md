@@ -1,3 +1,9 @@
+
+<p align="center">
+  <img src="https://github.com/agosttt2/TP0---POO/raw/main/Screenshot%202026-04-22%20135539.png" width="300">
+</p>
+
+
 # TPO POO
 
 ## Integrantes
