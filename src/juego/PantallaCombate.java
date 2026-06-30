@@ -7,26 +7,32 @@ import java.util.Scanner;
 public class PantallaCombate extends JFrame {
 
     private Personaje[] personajesObjeto = {
+            new Mago(),
             new Caballero(),
             new Arquera(),
-            new Mago()
+            new Curandera()
     };
+
     private int personajeActual = 0;
+    private int turnosJefe = 0;
+    private Jefe jefe = new Jefe();
 
-    private int vidaJefe = 500;
-
-    private JLabel lblVidaJugador;
-    private JLabel lblVidaJefe;
-    private JLabel lblTurno;
-
-    private JLabel personajeLabel;
     private JLabel jefeLabel;
-    private JLabel curanderaLabel;
+    private JLabel lblVidaJefe;
+    private JLabel[] personajeLabels = new JLabel[4];
+    private JLabel[] panelNombre     = new JLabel[4];
+    private JLabel[] panelVida       = new JLabel[4];
+
+    // Tamaño base 140 + 25% = 175
+    private int anchoParty = 175;
+    private int altoParty  = 175;
+    private int tamanoJefe = 380;
 
     public PantallaCombate(String personajeInicial) {
         this(personajeInicial, false);
     }
 
+<<<<<<< Updated upstream
     public PantallaCombate(String personajeInicial, boolean cargarGuardado) {
 
         if (cargarGuardado) {
@@ -47,62 +53,70 @@ public class PantallaCombate extends JFrame {
      
         setTitle("Combate");
         setSize(1200, 700);
+=======
+        if (personajeInicial.equals("Mago"))      personajeActual = 0;
+        if (personajeInicial.equals("Caballero")) personajeActual = 1;
+        if (personajeInicial.equals("Arquera"))   personajeActual = 2;
+        if (personajeInicial.equals("Curandera")) personajeActual = 3;
+
+        setTitle("EL LEGADO DE LA SANGRE - Combate");
+>>>>>>> Stashed changes
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setResizable(false);
+        setUndecorated(true);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int sw = screenSize.width;
+        int sh = screenSize.height;
 
         JLabel fondo = new JLabel(
-                new ImageIcon("imagenes/fondoCombate.png"));
-
+                escalarImagen("imagenes/fondoCombate.png", sw, sh));
         fondo.setLayout(null);
 
-        personajeLabel = new JLabel();
-        personajeLabel.setBounds(120, 220, 300, 300);
+        // ── Posiciones de los sprites ────────────────────────────────────────
+        // Formación diagonal: Mago arriba, Caballero, Arquera, Curandera abajo
+        int[] posX = {
+            (int)(sw * 0.18),   // Mago
+            (int)(sw * 0.11),   // Caballero
+            (int)(sw * 0.20),   // Arquera
+            (int)(sw * 0.04)    // Curandera
+        };
+        int[] posY = {
+            (int)(sh * 0.08),   // Mago
+            (int)(sh * 0.28),   // Caballero
+            (int)(sh * 0.42),   // Arquera
+            (int)(sh * 0.55)    // Curandera
+        };
 
-        ImageIcon iconoJefe =
-                new ImageIcon("imagenes/jefe_idle.png");
+        for (int i = 0; i < personajesObjeto.length; i++) {
+            personajeLabels[i] = new JLabel();
+            personajeLabels[i].setBounds(posX[i], posY[i], anchoParty, altoParty);
+            fondo.add(personajeLabels[i]);
+        }
 
-        Image imagenJefe =
-                iconoJefe.getImage().getScaledInstance(
-                        300,
-                        300,
-                        Image.SCALE_SMOOTH);
+        // Jefe a la derecha
+        jefeLabel = new JLabel();
+        jefeLabel.setBounds((int)(sw * 0.62), (int)(sh * 0.08), tamanoJefe, tamanoJefe);
+        fondo.add(jefeLabel);
 
-        jefeLabel = new JLabel(
-                new ImageIcon(imagenJefe));
-
-        jefeLabel.setBounds(
-                800,
-                180,
-                300,
-                300);
-
-        curanderaLabel = new JLabel(
-                new ImageIcon("imagenes/curandera_idle.png"));
-        curanderaLabel.setBounds(500, 180, 250, 250);
-
-        lblTurno = new JLabel();
-        lblTurno.setForeground(Color.WHITE);
-        lblTurno.setFont(new Font("Arial", Font.BOLD, 24));
-        lblTurno.setBounds(470, 20, 300, 40);
-
-        lblVidaJugador = new JLabel();
-        lblVidaJugador.setForeground(Color.WHITE);
-        lblVidaJugador.setFont(new Font("Arial", Font.BOLD, 22));
-        lblVidaJugador.setBounds(100, 80, 350, 40);
-
-        lblVidaJefe = new JLabel(
-                "Jefe Vida: " + vidaJefe);
-        lblVidaJefe.setForeground(Color.WHITE);
+        // Vida del jefe encima de su sprite
+        lblVidaJefe = new JLabel();
+        lblVidaJefe.setForeground(Color.RED);
         lblVidaJefe.setFont(new Font("Arial", Font.BOLD, 22));
-        lblVidaJefe.setBounds(800, 80, 300, 40);
+        lblVidaJefe.setBounds((int)(sw * 0.62), (int)(sh * 0.03), 300, 30);
+        fondo.add(lblVidaJefe);
 
-        JButton atacar = new JButton("ATACAR");
-        atacar.setBounds(380, 560, 150, 40);
+        // Barra inferior
+        JPanel barraInferior = crearBarraInferior(sw);
+        barraInferior.setBounds(0, sh - 140, sw, 140);
+        fondo.add(barraInferior);
 
-        JButton defender = new JButton("DEFENDER");
-        defender.setBounds(550, 560, 150, 40);
+        setContentPane(fondo);
+        actualizarPantalla();
+        setVisible(true);
+    }
 
+<<<<<<< Updated upstream
         JButton habilidad = new JButton("HABILIDAD");
         habilidad.setBounds(720, 560, 150, 40);
         
@@ -119,104 +133,139 @@ public class PantallaCombate extends JFrame {
         JButton tienda = new JButton("TIENDA");
         tienda.setBounds(50, 560, 120, 40);
         tienda.addActionListener(e -> {
+=======
+    private JPanel crearBarraInferior(int sw) {
+>>>>>>> Stashed changes
 
-            new PantallaTienda();
+        JPanel barra = new JPanel(null);
+        barra.setBackground(new Color(0, 0, 0, 180));
+        barra.setOpaque(true);
+        barra.setBorder(BorderFactory.createLineBorder(new Color(212, 175, 55), 3));
 
-        });
+        for (int i = 0; i < personajesObjeto.length; i++) {
+
+            JPanel tarjeta = new JPanel(null);
+            tarjeta.setOpaque(false);
+            tarjeta.setBounds(20 + i * 250, 10, 240, 120);
+
+            panelNombre[i] = new JLabel();
+            panelNombre[i].setForeground(new Color(212, 175, 55));
+            panelNombre[i].setFont(new Font("Arial", Font.BOLD, 13));
+            panelNombre[i].setBounds(0, 0, 240, 20);
+
+            panelVida[i] = new JLabel();
+            panelVida[i].setForeground(Color.WHITE);
+            panelVida[i].setFont(new Font("Arial", Font.PLAIN, 11));
+            panelVida[i].setBounds(0, 22, 240, 95);
+            panelVida[i].setVerticalAlignment(SwingConstants.TOP);
+
+            tarjeta.add(panelNombre[i]);
+            tarjeta.add(panelVida[i]);
+            barra.add(tarjeta);
+        }
+
+        JButton atacar   = crearBoton("ATACAR",    sw - 350, 20, 150, 40);
+        JButton defender = crearBoton("DEFENDER",  sw - 190, 20, 150, 40);
+        JButton habil    = crearBoton("HABILIDAD", sw - 350, 70, 150, 40);
+        JButton salir    = crearBoton("SALIR",     sw - 190, 70, 150, 40);
 
         atacar.addActionListener(e -> {
 
-        	vidaJefe -= personajesObjeto[personajeActual].getAtaque();
+            Personaje p = personajesObjeto[personajeActual];
 
-        	actualizarPantalla();
+            personajeLabels[personajeActual].setIcon(
+                    escalarImagen("imagenes/" + p.getNombre().toLowerCase() + "_ataque.png",
+                            anchoParty, altoParty));
 
-        	if (vidaJefe <= 0) {
+            int dmg = p.calcularDanoFinal();
+            jefe.recibirDanio(dmg);
 
-        	    new PantallaVictoria();
-        	    dispose();
-        	    return;
-        	}
+            JOptionPane.showMessageDialog(
+                    this, p.getNombre() + " hizo " + dmg + " de daño al Jefe!");
 
-        	turnoJefe();
+            p.estado = "VIVO";
 
-        	if (!personajesObjeto[personajeActual].estaVivo()) {
-
-        	    JOptionPane.showMessageDialog(
-        	            this,
-        	            personajesObjeto[personajeActual].getNombre()
-        	                    + " ha sido derrotado");
-        	}
-
-        	turnoCurandera();
-
-        	siguientePersonaje();
-
-        	actualizarPantalla();
-
-            actualizarPantalla();
-        });
-
-        habilidad.addActionListener(e -> {
-
-        	vidaJefe -= personajesObjeto[personajeActual].usarHabilidad();
-
-        	actualizarPantalla();
-
-        	if (vidaJefe <= 0) {
-
-        	    new PantallaVictoria();
-        	    dispose();
-        	    return;
-        	}
-
-        	turnoJefe();
-
-        	if (!personajesObjeto[personajeActual].estaVivo()) {
-
-        	    JOptionPane.showMessageDialog(
-        	            this,
-        	            personajesObjeto[personajeActual].getNombre()
-        	                    + " ha sido derrotado");
-        	}
-
-        	turnoCurandera();
-
-        	siguientePersonaje();
-
-        	actualizarPantalla();
-
-            actualizarPantalla();
+            Timer t = new Timer(800, ev -> finalizarTurno());
+            t.setRepeats(false);
+            t.start();
         });
 
         defender.addActionListener(e -> {
 
-            turnoJefe();
-            turnoCurandera();
-            siguientePersonaje();
+            Personaje p = personajesObjeto[personajeActual];
 
-            actualizarPantalla();
+            personajeLabels[personajeActual].setIcon(
+                    escalarImagen("imagenes/" + p.getNombre().toLowerCase() + "_bloquear.png",
+                            anchoParty, altoParty));
+
+            p.estado = "DEFENDIENDO";
+
+            JOptionPane.showMessageDialog(
+                    this, p.getNombre() + " está defendiendo!");
+
+            Timer t = new Timer(800, ev -> finalizarTurno());
+            t.setRepeats(false);
+            t.start();
         });
 
-        fondo.add(personajeLabel);
-        fondo.add(jefeLabel);
-        fondo.add(curanderaLabel);
+        habil.addActionListener(e -> {
 
-        fondo.add(lblTurno);
-        fondo.add(lblVidaJugador);
-        fondo.add(lblVidaJefe);
+            Personaje p = personajesObjeto[personajeActual];
+            String[] habs = p.getNombresHabilidades();
 
-        fondo.add(atacar);
-        fondo.add(defender);
-        fondo.add(habilidad);
-        fondo.add(tienda);
+            // Mostramos las habilidades disponibles para elegir
+            String elegida = (String) JOptionPane.showInputDialog(
+                    this,
+                    "Selecciona una habilidad:",
+                    "Habilidades de " + p.getNombre(),
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    habs,
+                    habs[0]);
 
-        setContentPane(fondo);
+            if (elegida != null) {
 
-        actualizarPantalla();
+                // Buscamos el índice de la habilidad elegida
+                int idx = 0;
+                for (int i = 0; i < habs.length; i++) {
+                    if (habs[i].equals(elegida)) {
+                        idx = i;
+                    }
+                }
 
-        setVisible(true);
+                personajeLabels[personajeActual].setIcon(
+                        escalarImagen(p.getSpriteHabilidad(idx), anchoParty, altoParty));
+
+                int valor = p.ejecutarHabilidad(idx);
+
+                if (p.habilidadEsCuracion(idx)) {
+                    curarAliadoAleatorio(valor);
+                } else {
+                    jefe.recibirDanio(valor);
+                    JOptionPane.showMessageDialog(
+                            this, p.getNombre() + " usó " + elegida +
+                            " e hizo " + valor + " de daño!");
+                }
+
+                p.estado = "VIVO";
+
+                Timer t = new Timer(1000, ev -> finalizarTurno());
+                t.setRepeats(false);
+                t.start();
+            }
+        });
+
+        salir.addActionListener(e -> System.exit(0));
+
+        barra.add(atacar);
+        barra.add(defender);
+        barra.add(habil);
+        barra.add(salir);
+
+        return barra;
     }
 
+<<<<<<< Updated upstream
     private void guardarPartida() {
 
     	  			try (PrintWriter pw = new PrintWriter(new FileWriter("partida_guardada.txt"))) {
@@ -261,116 +310,210 @@ public class PantallaCombate extends JFrame {
     }
 
 	private void actualizarPantalla() {
+=======
+    private void finalizarTurno() {
+>>>>>>> Stashed changes
 
-    	lblTurno.setText(
-    	        "Turno: " + personajesObjeto[personajeActual].getNombre());
+        if (!jefe.estaVivo()) {
 
-    	lblVidaJugador.setText(
-    	        personajesObjeto[personajeActual].getNombre()
-    	                + " Vida: "
-    	                + personajesObjeto[personajeActual].getVida());
+            jefeLabel.setIcon(escalarImagen("imagenes/jefe_derrota.png", tamanoJefe, tamanoJefe));
 
-        lblVidaJefe.setText(
-                "Jefe Vida: " + vidaJefe);
+            for (int i = 0; i < personajesObjeto.length; i++) {
+                if (personajesObjeto[i].estaVivo()) {
+                    personajesObjeto[i].ganarExperiencia(100);
+                    personajeLabels[i].setIcon(escalarImagen(
+                            "imagenes/" + personajesObjeto[i].getNombre().toLowerCase() + "_victoria.png",
+                            anchoParty, altoParty));
+                }
+            }
 
-        String sprite = "";
-
-        if (personajeActual == 0) {
-
-        	if (personajesObjeto[0].estaVivo())
-                sprite = "imagenes/caballero_idle.png";
-            else
-                sprite = "imagenes/caballero_derrota.png";
+            JOptionPane.showMessageDialog(this, "¡Victoria!");
+            new PantallaVictoria();
+            dispose();
+            return;
         }
 
-        if (personajeActual == 1) {
+        turnoJefe();
 
-        	if (personajesObjeto[1].estaVivo())
-                sprite = "imagenes/arquera_idle.png";
-            else
-                sprite = "imagenes/arquera_derrota.png";
+        if (!verificarDerrota()) {
+            siguientePersonaje();
+            actualizarPantalla();
+        }
+    }
+
+    private boolean verificarDerrota() {
+
+        for (int i = 0; i < personajesObjeto.length; i++) {
+            if (personajesObjeto[i].estaVivo()) {
+                return false;
+            }
         }
 
-        if (personajeActual == 2) {
-
-        	if (personajesObjeto[2].estaVivo())
-                sprite = "imagenes/mago_idle.png";
-            else
-                sprite = "imagenes/mago_derrota.png";
-        }
-
-        ImageIcon icono = new ImageIcon(sprite);
-
-        Image imagenEscalada =
-                icono.getImage().getScaledInstance(
-                        250,
-                        250,
-                        Image.SCALE_SMOOTH);
-
-        personajeLabel.setIcon(
-                new ImageIcon(imagenEscalada));
-
-        verificarDerrota();
+        JOptionPane.showMessageDialog(this, "¡DERROTA!");
+        new PantallaDerrota();
+        dispose();
+        return true;
     }
 
     private void turnoJefe() {
 
-        JOptionPane.showMessageDialog(
-                this,
-                "Turno del Jefe\nAtaque: -20 HP");
+        turnosJefe++;
 
-        personajesObjeto[personajeActual].recibirDanio(20);
-        actualizarPantalla();
+        int turnosParaCurar = 3 + (int)(Math.random() * 3);
+
+        if (turnosJefe >= turnosParaCurar) {
+
+            jefeLabel.setIcon(escalarImagen("imagenes/jefe_curacion.png", tamanoJefe, tamanoJefe));
+
+            int heal = 50;
+            jefe.curar(heal);
+
+            JOptionPane.showMessageDialog(
+                    this, "¡El Jefe se regenera " + heal + " HP!");
+
+            turnosJefe = 0;
+
+        } else {
+
+            jefeLabel.setIcon(escalarImagen("imagenes/jefe_ataque.png", tamanoJefe, tamanoJefe));
+
+            // Contar personajes vivos
+            int vivosCount = 0;
+            for (int i = 0; i < personajesObjeto.length; i++) {
+                if (personajesObjeto[i].estaVivo()) {
+                    vivosCount++;
+                }
+            }
+
+            if (vivosCount > 0) {
+
+                int objetivo = (int)(Math.random() * vivosCount);
+                int contador = 0;
+
+                for (int i = 0; i < personajesObjeto.length; i++) {
+
+                    if (personajesObjeto[i].estaVivo()) {
+
+                        if (contador == objetivo) {
+
+                            Personaje obj = personajesObjeto[i];
+
+                            int danio;
+                            if (obj.estado.equals("DEFENDIENDO")) {
+                                danio = Math.max(5, jefe.calcularDanoFinal() - obj.getDefensa());
+                            } else {
+                                danio = jefe.calcularDanoFinal();
+                            }
+
+                            obj.recibirDanio(danio);
+
+                            JOptionPane.showMessageDialog(
+                                    this,
+                                    "El Jefe ataca a " + obj.getNombre() +
+                                    " por " + danio + " de daño.");
+
+                            obj.estado = "VIVO";
+                            break;
+                        }
+
+                        contador++;
+                    }
+                }
+            }
+        }
     }
 
-    private void turnoCurandera() {
+    private void curarAliadoAleatorio(int cantidad) {
 
-        curanderaLabel.setVisible(true);
+        int vivosCount = 0;
+        for (int i = 0; i < personajesObjeto.length; i++) {
+            if (personajesObjeto[i].estaVivo()) {
+                vivosCount++;
+            }
+        }
 
-        curanderaLabel.setIcon(
-                new ImageIcon(
-                        "imagenes/curandera_curacion.png"));
+        if (vivosCount == 0) {
+            return;
+        }
 
-        JOptionPane.showMessageDialog(
-                this,
-                "Turno de la Curandera\nCuración: +25 HP");
+        int objetivo = (int)(Math.random() * vivosCount);
+        int contador = 0;
 
-        personajesObjeto[personajeActual].curar(25);
+        for (int i = 0; i < personajesObjeto.length; i++) {
 
+            if (personajesObjeto[i].estaVivo()) {
 
-        Timer timer = new Timer(1000, e -> {
+                if (contador == objetivo) {
+                    personajesObjeto[i].curar(cantidad);
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "La Curandera curó a " + personajesObjeto[i].getNombre() +
+                            " por " + cantidad + " HP!");
+                    break;
+                }
 
-            curanderaLabel.setIcon(
-                    new ImageIcon(
-                            "imagenes/curandera_idle.png"));
-        });
-
-        timer.setRepeats(false);
-        timer.start();
+                contador++;
+            }
+        }
     }
 
     private void siguientePersonaje() {
 
-        int intentos = 0;
-
         do {
-
-            personajeActual++;
-
-            if (personajeActual >= personajesObjeto.length)
-                personajeActual = 0;
-
-            intentos++;
-
-        } while (!personajesObjeto[personajeActual].estaVivo()
-                && intentos < 3);
+            personajeActual = (personajeActual + 1) % personajesObjeto.length;
+        } while (!personajesObjeto[personajeActual].estaVivo());
     }
 
-    private void verificarDerrota() {
+    private void actualizarPantalla() {
 
-    	if (!personajesObjeto[0].estaVivo() &&
-    		    !personajesObjeto[1].estaVivo() &&
-    		    !personajesObjeto[2].estaVivo()) {
+        for (int i = 0; i < personajesObjeto.length; i++) {
+
+            Personaje p = personajesObjeto[i];
+            String estadoStr = p.estaVivo() ? p.estado.toUpperCase() : "DERROTADO";
+
+            if (i == personajeActual) {
+                panelNombre[i].setText("▶ " + p.getNombre());
+            } else {
+                panelNombre[i].setText(p.getNombre());
+            }
+
+            panelVida[i].setText(
+                    "<html>" +
+                    "HP: "     + p.getVida()        + "/" + p.getVidaMaxima()          + "<br>" +
+                    "ATQ: "    + p.calcularDanoFinal() + "  DEF: " + p.getDefensa()    + "<br>" +
+                    "VEL: "    + p.getVelocidad()    + "  Nv: " + p.getNivel()         + "<br>" +
+                    "Exp: "    + p.getExperiencia()  + "/" + p.getExperienciaNecesaria() + "<br>" +
+                    "ESTADO: " + estadoStr           +
+                    "</html>");
+
+            if (p.estaVivo()) {
+                personajeLabels[i].setIcon(escalarImagen(
+                        "imagenes/" + p.getNombre().toLowerCase() + "_idle.png",
+                        anchoParty, altoParty));
+            } else {
+                personajeLabels[i].setIcon(escalarImagen(
+                        "imagenes/" + p.getNombre().toLowerCase() + "_derrota.png",
+                        anchoParty, altoParty));
+            }
         }
+
+        if (jefe.estaVivo()) {
+            jefeLabel.setIcon(escalarImagen("imagenes/jefe_idle.png", tamanoJefe, tamanoJefe));
+        }
+
+        lblVidaJefe.setText("HP Jefe: " + jefe.getVida() + "/" + jefe.getVidaMaxima());
+    }
+
+    private JButton crearBoton(String texto, int x, int y, int w, int h) {
+        JButton b = new JButton(texto);
+        b.setBounds(x, y, w, h);
+        b.setBackground(new Color(212, 175, 55));
+        return b;
+    }
+
+    private ImageIcon escalarImagen(String ruta, int w, int h) {
+        return new ImageIcon(
+                new ImageIcon(ruta).getImage()
+                        .getScaledInstance(w, h, Image.SCALE_SMOOTH));
     }
 }
