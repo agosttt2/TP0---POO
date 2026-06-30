@@ -2,7 +2,8 @@ package juego;
 
 import javax.swing.*;
 import java.awt.*;
-
+import java.io.*;
+import java.util.Scanner;
 public class PantallaCombate extends JFrame {
 
     private Personaje[] personajesObjeto = {
@@ -23,17 +24,27 @@ public class PantallaCombate extends JFrame {
     private JLabel curanderaLabel;
 
     public PantallaCombate(String personajeInicial) {
-    	
+        this(personajeInicial, false);
+    }
 
-        if (personajeInicial.equals("Caballero"))
-            personajeActual = 0;
+    public PantallaCombate(String personajeInicial, boolean cargarGuardado) {
 
-        if (personajeInicial.equals("Arquera"))
-            personajeActual = 1;
+        if (cargarGuardado) {
 
-        if (personajeInicial.equals("Mago"))
-            personajeActual = 2;
+            guardarPartida();
 
+        } else {
+
+            if (personajeInicial.equals("Caballero"))
+                personajeActual = 0;
+
+            if (personajeInicial.equals("Arquera"))
+                personajeActual = 1;
+
+            if (personajeInicial.equals("Mago"))
+                personajeActual = 2;
+        }
+     
         setTitle("Combate");
         setSize(1200, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -207,9 +218,47 @@ public class PantallaCombate extends JFrame {
     }
 
     private void guardarPartida() {
-		// TODO Auto-generated method stub
+
+    	  			try (PrintWriter pw = new PrintWriter(new FileWriter("partida_guardada.txt"))) {
+
+    	            pw.println(personajeActual);
+    	            pw.println(vidaJefe);
+
+    	            for (Personaje p : personajesObjeto) {
+    	                pw.println(p.getNombre() + ";" + p.getVida());
+    	            }
+
+    	        } catch (IOException ex) {
+    	            ex.printStackTrace();
+    	            JOptionPane.showMessageDialog(this, "Error al guardar la partida");
+    	        }
+    	    }
 		
-	}
+    private void cargarPartida() {
+
+        try {
+
+            Scanner lector = new Scanner(new File("partida_guardada.txt"));
+
+            personajeActual = Integer.parseInt(lector.nextLine());
+            vidaJefe = Integer.parseInt(lector.nextLine());
+
+            for (int i = 0; i < personajesObjeto.length; i++) {
+
+                String linea = lector.nextLine();
+                String[] partes = linea.split(";");
+                int vidaGuardada = Integer.parseInt(partes[1]);
+
+                personajesObjeto[i].vida = vidaGuardada;
+            }
+
+            lector.close();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al cargar la partida");
+        }
+    }
 
 	private void actualizarPantalla() {
 
