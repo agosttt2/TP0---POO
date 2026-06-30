@@ -4,12 +4,14 @@ public abstract class Personaje {
 
     protected String nombre;
     protected int vida;
+    protected int vidaMaxima;
     protected int ataque;
     protected int defensa;
 
     public Personaje(String nombre, int vida, int ataque, int defensa) {
         this.nombre = nombre;
         this.vida = vida;
+        this.vidaMaxima = vida;
         this.ataque = ataque;
         this.defensa = defensa;
     }
@@ -33,6 +35,17 @@ public abstract class Personaje {
     public boolean estaVivo() {
         return vida > 0;
     }
+    public int getAtaque() {
+        return ataque;
+    }
 
+    public void curar(int cantidad) {
+        vida += cantidad;
+
+        if (vida > vidaMaxima) {
+            vida = vidaMaxima;
+        }
+    }
+    
     public abstract int usarHabilidad();
 }

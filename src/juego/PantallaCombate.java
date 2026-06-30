@@ -5,18 +5,11 @@ import java.awt.*;
 
 public class PantallaCombate extends JFrame {
 
-    private String[] personajes = {
-            "Caballero",
-            "Arquera",
-            "Mago"
+    private Personaje[] personajesObjeto = {
+            new Caballero(),
+            new Arquera(),
+            new Mago()
     };
-
-    private int[] vidas = {
-            100,
-            70,
-            80
-    };
-
     private int personajeActual = 0;
 
     private int vidaJefe = 500;
@@ -111,7 +104,7 @@ public class PantallaCombate extends JFrame {
 
         atacar.addActionListener(e -> {
 
-        	vidaJefe -= 20;
+        	vidaJefe -= personajesObjeto[personajeActual].getAtaque();
 
         	actualizarPantalla();
 
@@ -124,11 +117,11 @@ public class PantallaCombate extends JFrame {
 
         	turnoJefe();
 
-        	if (vidas[personajeActual] <= 0) {
+        	if (!personajesObjeto[personajeActual].estaVivo()) {
 
         	    JOptionPane.showMessageDialog(
         	            this,
-        	            personajes[personajeActual]
+        	            personajesObjeto[personajeActual].getNombre()
         	                    + " ha sido derrotado");
         	}
 
@@ -143,7 +136,7 @@ public class PantallaCombate extends JFrame {
 
         habilidad.addActionListener(e -> {
 
-        	vidaJefe -= 40;
+        	vidaJefe -= personajesObjeto[personajeActual].usarHabilidad();
 
         	actualizarPantalla();
 
@@ -156,11 +149,11 @@ public class PantallaCombate extends JFrame {
 
         	turnoJefe();
 
-        	if (vidas[personajeActual] <= 0) {
+        	if (!personajesObjeto[personajeActual].estaVivo()) {
 
         	    JOptionPane.showMessageDialog(
         	            this,
-        	            personajes[personajeActual]
+        	            personajesObjeto[personajeActual].getNombre()
         	                    + " ha sido derrotado");
         	}
 
@@ -204,13 +197,13 @@ public class PantallaCombate extends JFrame {
 
     private void actualizarPantalla() {
 
-        lblTurno.setText(
-                "Turno: " + personajes[personajeActual]);
+    	lblTurno.setText(
+    	        "Turno: " + personajesObjeto[personajeActual].getNombre());
 
-        lblVidaJugador.setText(
-                personajes[personajeActual]
-                        + " Vida: "
-                        + vidas[personajeActual]);
+    	lblVidaJugador.setText(
+    	        personajesObjeto[personajeActual].getNombre()
+    	                + " Vida: "
+    	                + personajesObjeto[personajeActual].getVida());
 
         lblVidaJefe.setText(
                 "Jefe Vida: " + vidaJefe);
@@ -219,7 +212,7 @@ public class PantallaCombate extends JFrame {
 
         if (personajeActual == 0) {
 
-            if (vidas[0] > 0)
+        	if (personajesObjeto[0].estaVivo())
                 sprite = "imagenes/caballero_idle.png";
             else
                 sprite = "imagenes/caballero_derrota.png";
@@ -227,7 +220,7 @@ public class PantallaCombate extends JFrame {
 
         if (personajeActual == 1) {
 
-            if (vidas[1] > 0)
+        	if (personajesObjeto[1].estaVivo())
                 sprite = "imagenes/arquera_idle.png";
             else
                 sprite = "imagenes/arquera_derrota.png";
@@ -235,7 +228,7 @@ public class PantallaCombate extends JFrame {
 
         if (personajeActual == 2) {
 
-            if (vidas[2] > 0)
+        	if (personajesObjeto[2].estaVivo())
                 sprite = "imagenes/mago_idle.png";
             else
                 sprite = "imagenes/mago_derrota.png";
@@ -261,11 +254,7 @@ public class PantallaCombate extends JFrame {
                 this,
                 "Turno del Jefe\nAtaque: -20 HP");
 
-        vidas[personajeActual] -= 20;
-
-        if (vidas[personajeActual] < 0)
-            vidas[personajeActual] = 0;
-
+        personajesObjeto[personajeActual].recibirDanio(20);
         actualizarPantalla();
     }
 
@@ -281,21 +270,8 @@ public class PantallaCombate extends JFrame {
                 this,
                 "Turno de la Curandera\nCuración: +25 HP");
 
-        vidas[personajeActual] += 25;
+        personajesObjeto[personajeActual].curar(25);
 
-        if (personajeActual == 0 &&
-                vidas[personajeActual] > 100)
-            vidas[personajeActual] = 100;
-
-        if (personajeActual == 1 &&
-                vidas[personajeActual] > 70)
-            vidas[personajeActual] = 70;
-
-        if (personajeActual == 2 &&
-                vidas[personajeActual] > 80)
-            vidas[personajeActual] = 80;
-
-        
 
         Timer timer = new Timer(1000, e -> {
 
@@ -316,23 +292,20 @@ public class PantallaCombate extends JFrame {
 
             personajeActual++;
 
-            if (personajeActual >= personajes.length)
+            if (personajeActual >= personajesObjeto.length)
                 personajeActual = 0;
 
             intentos++;
 
-        } while (vidas[personajeActual] <= 0
+        } while (!personajesObjeto[personajeActual].estaVivo()
                 && intentos < 3);
     }
 
     private void verificarDerrota() {
 
-        if (vidas[0] <= 0 &&
-                vidas[1] <= 0 &&
-                vidas[2] <= 0) {
-
-            new PantallaDerrota();
-            dispose();
+    	if (!personajesObjeto[0].estaVivo() &&
+    		    !personajesObjeto[1].estaVivo() &&
+    		    !personajesObjeto[2].estaVivo()) {
         }
     }
 }
