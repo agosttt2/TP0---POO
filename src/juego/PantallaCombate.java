@@ -23,6 +23,7 @@ public class PantallaCombate extends JFrame {
     private JLabel curanderaLabel;
 
     public PantallaCombate(String personajeInicial) {
+    	
 
         if (personajeInicial.equals("Caballero"))
             personajeActual = 0;
@@ -93,6 +94,16 @@ public class PantallaCombate extends JFrame {
 
         JButton habilidad = new JButton("HABILIDAD");
         habilidad.setBounds(720, 560, 150, 40);
+        
+        JButton guardar = new JButton("GUARDAR");
+        guardar.setBounds(50, 510, 120, 40);
+
+        guardar.addActionListener(e -> {
+             guardarPartida ();
+            JOptionPane.showMessageDialog(this, "Partida guardada correctamente");
+        });
+
+        fondo.add(guardar);
         
         JButton tienda = new JButton("TIENDA");
         tienda.setBounds(50, 560, 120, 40);
@@ -195,7 +206,12 @@ public class PantallaCombate extends JFrame {
         setVisible(true);
     }
 
-    private void actualizarPantalla() {
+    private void guardarPartida() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void actualizarPantalla() {
 
     	lblTurno.setText(
     	        "Turno: " + personajesObjeto[personajeActual].getNombre());
