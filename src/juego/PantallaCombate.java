@@ -2,8 +2,7 @@ package juego;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
-import java.util.Scanner;
+
 public class PantallaCombate extends JFrame {
 
     private Personaje[] personajesObjeto = {
@@ -29,39 +28,14 @@ public class PantallaCombate extends JFrame {
     private int tamanoJefe = 380;
 
     public PantallaCombate(String personajeInicial) {
-        this(personajeInicial, false);
-    }
 
-<<<<<<< Updated upstream
-    public PantallaCombate(String personajeInicial, boolean cargarGuardado) {
-
-        if (cargarGuardado) {
-
-            guardarPartida();
-
-        } else {
-
-            if (personajeInicial.equals("Caballero"))
-                personajeActual = 0;
-
-            if (personajeInicial.equals("Arquera"))
-                personajeActual = 1;
-
-            if (personajeInicial.equals("Mago"))
-                personajeActual = 2;
-        }
-     
-        setTitle("Combate");
-        setSize(1200, 700);
-=======
         if (personajeInicial.equals("Mago"))      personajeActual = 0;
         if (personajeInicial.equals("Caballero")) personajeActual = 1;
         if (personajeInicial.equals("Arquera"))   personajeActual = 2;
         if (personajeInicial.equals("Curandera")) personajeActual = 3;
 
         setTitle("EL LEGADO DE LA SANGRE - Combate");
->>>>>>> Stashed changes
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
         setUndecorated(true);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -116,26 +90,7 @@ public class PantallaCombate extends JFrame {
         setVisible(true);
     }
 
-<<<<<<< Updated upstream
-        JButton habilidad = new JButton("HABILIDAD");
-        habilidad.setBounds(720, 560, 150, 40);
-        
-        JButton guardar = new JButton("GUARDAR");
-        guardar.setBounds(50, 510, 120, 40);
-
-        guardar.addActionListener(e -> {
-             guardarPartida ();
-            JOptionPane.showMessageDialog(this, "Partida guardada correctamente");
-        });
-
-        fondo.add(guardar);
-        
-        JButton tienda = new JButton("TIENDA");
-        tienda.setBounds(50, 560, 120, 40);
-        tienda.addActionListener(e -> {
-=======
     private JPanel crearBarraInferior(int sw) {
->>>>>>> Stashed changes
 
         JPanel barra = new JPanel(null);
         barra.setBackground(new Color(0, 0, 0, 180));
@@ -265,54 +220,7 @@ public class PantallaCombate extends JFrame {
         return barra;
     }
 
-<<<<<<< Updated upstream
-    private void guardarPartida() {
-
-    	  			try (PrintWriter pw = new PrintWriter(new FileWriter("partida_guardada.txt"))) {
-
-    	            pw.println(personajeActual);
-    	            pw.println(vidaJefe);
-
-    	            for (Personaje p : personajesObjeto) {
-    	                pw.println(p.getNombre() + ";" + p.getVida());
-    	            }
-
-    	        } catch (IOException ex) {
-    	            ex.printStackTrace();
-    	            JOptionPane.showMessageDialog(this, "Error al guardar la partida");
-    	        }
-    	    }
-		
-    private void cargarPartida() {
-
-        try {
-
-            Scanner lector = new Scanner(new File("partida_guardada.txt"));
-
-            personajeActual = Integer.parseInt(lector.nextLine());
-            vidaJefe = Integer.parseInt(lector.nextLine());
-
-            for (int i = 0; i < personajesObjeto.length; i++) {
-
-                String linea = lector.nextLine();
-                String[] partes = linea.split(";");
-                int vidaGuardada = Integer.parseInt(partes[1]);
-
-                personajesObjeto[i].vida = vidaGuardada;
-            }
-
-            lector.close();
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error al cargar la partida");
-        }
-    }
-
-	private void actualizarPantalla() {
-=======
     private void finalizarTurno() {
->>>>>>> Stashed changes
 
         if (!jefe.estaVivo()) {
 
