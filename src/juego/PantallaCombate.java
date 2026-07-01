@@ -37,7 +37,6 @@ public class PantallaCombate extends JFrame {
         if (cargarPartida) {
 
             cargarPartida(); // Corrección menor sugerida por contexto: si es cargar, debería cargar en lugar de guardar
-
         } else {
 
             if (personajeInicial.equals("Mago"))      personajeActual = 0;
@@ -292,7 +291,7 @@ public class PantallaCombate extends JFrame {
 
             jefeLabel.setIcon(escalarImagen("imagenes/jefe_ataque.png", tamanoJefe, tamanoJefe));
 
-            // Contar personajes vivos
+         
             int vivosCount = 0;
             for (int i = 0; i < personajesObjeto.length; i++) {
                 if (personajesObjeto[i].estaVivo()) {
@@ -385,6 +384,11 @@ public class PantallaCombate extends JFrame {
 
             Personaje p = personajesObjeto[i];
             String estadoStr = p.estaVivo() ? p.estado.toUpperCase() : "DERROTADO";
+            String manaTexto = "";
+            if (p instanceof Mago) {
+                Mago mago = (Mago) p;
+                manaTexto = "Mana: " + mago.getMana() + "<br>";
+            }
 
             if (i == personajeActual) {
                 panelNombre[i].setText("▶ " + p.getNombre());
@@ -397,7 +401,8 @@ public class PantallaCombate extends JFrame {
                     "HP: "     + p.getVida()        + "/" + p.getVidaMaxima()          + "<br>" +
                     "ATQ: "    + p.calcularDanoFinal() + "  DEF: " + p.getDefensa()    + "<br>" +
                     "VEL: "    + p.getVelocidad()    + "  Nv: " + p.getNivel()         + "<br>" +
-                    "Exp: "    + p.getExperiencia()  + "/" + p.getExperienciaNecesaria() + "<br>" +
+                    manaTexto +
+                    "Exp:"    + p.getExperiencia()  + "/" + p.getExperienciaNecesaria() + "<br>" +
                     "ESTADO: " + estadoStr           +
                     "</html>");
 
@@ -447,7 +452,6 @@ public class PantallaCombate extends JFrame {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al guardar la partida");
         }
-        // ¡Bloque duplicado y erróneo eliminado de aquí!
     }
 
     private void cargarPartida() {

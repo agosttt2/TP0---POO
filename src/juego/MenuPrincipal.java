@@ -39,7 +39,7 @@ public class MenuPrincipal extends JFrame {
         salir.setContentAreaFilled(false);
         salir.setBorderPainted(false);
 
-        // NUEVA PARTIDA
+        // NuevaPartida 
         nuevaPartida.addActionListener(e -> {
 
             new SeleccionPersonaje();
@@ -48,7 +48,7 @@ public class MenuPrincipal extends JFrame {
 
         });
 
-        // CARGAR PARTIDA
+        // CargarPartida
         cargarPartida.addActionListener(e -> {
 
             File archivoGuardado = new File("partida_guardada.txt");
@@ -66,7 +66,7 @@ public class MenuPrincipal extends JFrame {
 
         });
 
-        // SALIR
+        // Salir
         salir.addActionListener(e -> {
 
             System.exit(0);
