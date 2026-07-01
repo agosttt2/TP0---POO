@@ -51,7 +51,6 @@ public class Curandera extends Personaje {
         return 30;  // Cantidad de curación
     }
 
-    // Sobreescribe para indicar que esta habilidad cura en lugar de dañar
     @Override
     public boolean habilidadEsCuracion(int index) {
         return true;

@@ -33,13 +33,11 @@ public class SeleccionPersonaje extends JFrame {
         fondo.setLayout(null);
         fondo.setBounds(0, 0, screenW, screenH);
 
-        // ── AJUSTE MANUAL: SPRITE ──
         int offsetX = 250; 
         int offsetY = -160;
 
-        // ── AJUSTE MANUAL: TEXTO ──
-        int textOffsetX = 0; // Cambia esto para mover el nombre lateralmente
-        int textOffsetY = -150; // Cambia esto para mover el nombre verticalmente
+        int textOffsetX = 0; 
+        int textOffsetY = -150; 
 
         JLabel titulo = new JLabel("ELIGE TU PERSONAJE", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, (int)(screenH * 0.05)));
@@ -49,11 +47,9 @@ public class SeleccionPersonaje extends JFrame {
         int imgX = (screenW - imgSize) / 2;
         int imgY = (screenH - imgSize) / 2 - 50; 
 
-        // Sprite con su ajuste independiente[cite: 14]
         imagenPersonaje = new JLabel("", SwingConstants.CENTER);
         imagenPersonaje.setBounds(imgX + offsetX, imgY + offsetY, imgSize, imgSize);
 
-        // Flechas fijas en el centro original[cite: 14]
         int btnSize = (int)(screenH * 0.08);
         JButton izquierda = crearBotonEstilo("<");
         izquierda.setBounds(imgX - btnSize - 40, imgY + (imgSize / 2) - (btnSize / 2), btnSize, btnSize);
@@ -61,7 +57,6 @@ public class SeleccionPersonaje extends JFrame {
         JButton derecha = crearBotonEstilo(">");
         derecha.setBounds(imgX + imgSize + 40, imgY + (imgSize / 2) - (btnSize / 2), btnSize, btnSize);
 
-        // Texto con su ajuste independiente[cite: 14]
         nombrePersonaje = new JLabel("", SwingConstants.CENTER);
         nombrePersonaje.setFont(new Font("Arial", Font.BOLD, (int)(screenH * 0.04)));
         nombrePersonaje.setForeground(new Color(212, 175, 55));
@@ -100,8 +95,8 @@ public class SeleccionPersonaje extends JFrame {
     private JButton crearBotonEstilo(String texto) {
         JButton boton = new JButton(texto);
         boton.setFont(new Font("Arial", Font.BOLD, 16));
-        boton.setForeground(new Color(40, 30, 10)); // Estilo unificado[cite: 5, 14]
-        boton.setBackground(new Color(212, 175, 55)); // Estilo unificado[cite: 5, 14]
+        boton.setForeground(new Color(40, 30, 10)); 
+        boton.setBackground(new Color(212, 175, 55)); 
         boton.setFocusPainted(false);
         boton.setBorder(BorderFactory.createLineBorder(new Color(140, 110, 30), 2));
         return boton;

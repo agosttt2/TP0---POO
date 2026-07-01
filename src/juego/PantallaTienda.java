@@ -31,7 +31,7 @@ public class PantallaTienda extends JFrame {
         lblOro.setForeground(Color.YELLOW);
         lblOro.setBounds(30,20,250,40);
 
-        // ESPADA
+        //espada
         JButton espada = new JButton();
         espada.setBounds(280, 190, 120, 220);
         hacerInvisible(espada);
@@ -64,7 +64,7 @@ public class PantallaTienda extends JFrame {
 
         });
 
-        // ESCUDO
+        //escudo
         JButton escudo = new JButton();
         escudo.setBounds(450, 190, 120, 220);
         hacerInvisible(escudo);
@@ -97,7 +97,7 @@ public class PantallaTienda extends JFrame {
 
         });
 
-        // ARCO
+        //arco
         JButton arco = new JButton();
         arco.setBounds(650, 190, 120, 220);
         hacerInvisible(arco);
@@ -130,7 +130,7 @@ public class PantallaTienda extends JFrame {
 
         });
 
-        // BÁCULO
+        //baston
         JButton baculo = new JButton();
         baculo.setBounds(850, 190, 120, 220);
         hacerInvisible(baculo);

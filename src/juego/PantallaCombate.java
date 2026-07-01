@@ -84,13 +84,10 @@ public class PantallaCombate extends JFrame {
          fondo.add(personajeLabels[i]);
      }
 
-     // Orden de superposición:
-     // Curandera > Arquera > Caballero > Mago
-
-     fondo.setComponentZOrder(personajeLabels[0], 3); // Mago atrás
-     fondo.setComponentZOrder(personajeLabels[1], 2); // Caballero
-     fondo.setComponentZOrder(personajeLabels[2], 1); // Arquera
-     fondo.setComponentZOrder(personajeLabels[3], 0); // Curandera delante
+     fondo.setComponentZOrder(personajeLabels[0], 3);
+     fondo.setComponentZOrder(personajeLabels[1], 2);
+     fondo.setComponentZOrder(personajeLabels[2], 1); 
+     fondo.setComponentZOrder(personajeLabels[3], 0); 
 
         jefeLabel = new JLabel();
         jefeLabel.setBounds((int)(sw * 0.62), (int)(sh * 0.08), tamanoJefe, tamanoJefe);
