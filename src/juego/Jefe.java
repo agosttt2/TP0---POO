@@ -3,7 +3,7 @@ package juego;
 public class Jefe extends Personaje {
 
     public Jefe() {
-        super("Jefe Final", 500, 40, 8, 6, 1.0);
+        super("Jefe Final", 500, 50, 8, 6, 1.0);
     }
 
     @Override
