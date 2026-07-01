@@ -36,8 +36,7 @@ public class PantallaCombate extends JFrame {
 
         if (cargarPartida) {
 
-            cargarPartida(); // Corrección menor sugerida por contexto: si es cargar, debería cargar en lugar de guardar
-
+            cargarPartida(); 
         } else {
 
             if (personajeInicial.equals("Mago"))      personajeActual = 0;
@@ -223,7 +222,7 @@ public class PantallaCombate extends JFrame {
         barra.add(defender);
         barra.add(habil);
         barra.add(salir);
-        barra.add(guardar); // ¡Corregido!
+        barra.add(guardar); 
         return barra;
     }
    
@@ -292,7 +291,7 @@ public class PantallaCombate extends JFrame {
 
             jefeLabel.setIcon(escalarImagen("imagenes/jefe_ataque.png", tamanoJefe, tamanoJefe));
 
-            // Contar personajes vivos
+         
             int vivosCount = 0;
             for (int i = 0; i < personajesObjeto.length; i++) {
                 if (personajesObjeto[i].estaVivo()) {
@@ -453,7 +452,6 @@ public class PantallaCombate extends JFrame {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al guardar la partida");
         }
-        // ¡Bloque duplicado y erróneo eliminado de aquí!
     }
 
     private void cargarPartida() {
