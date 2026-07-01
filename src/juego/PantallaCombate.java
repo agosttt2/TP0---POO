@@ -35,10 +35,8 @@ public class PantallaCombate extends JFrame {
     public PantallaCombate(String personajeInicial, boolean cargarPartida) {
 
         if (cargarPartida) {
-
-            cargarPartida(); // Corrección menor sugerida por contexto: si es cargar, debería cargar en lugar de guardar
+            cargarPartida(); 
         } else {
-
             if (personajeInicial.equals("Mago"))      personajeActual = 0;
             if (personajeInicial.equals("Caballero")) personajeActual = 1;
             if (personajeInicial.equals("Arquera"))   personajeActual = 2;
@@ -94,6 +92,18 @@ public class PantallaCombate extends JFrame {
         setContentPane(fondo);
         actualizarPantalla();
         setVisible(true);
+    }
+
+    private void regenerarManaDescanso(int excluido) {
+        for (int i = 0; i < personajesObjeto.length; i++) {
+            if (i != excluido && personajesObjeto[i].estaVivo()) {
+                Personaje p = personajesObjeto[i];
+                if (p instanceof Mago) ((Mago) p).regenerarMana();
+                else if (p instanceof Caballero) ((Caballero) p).regenerarMana();
+                else if (p instanceof Arquera) ((Arquera) p).regenerarMana();
+                else if (p instanceof Curandera) ((Curandera) p).regenerarMana();
+            }
+        }
     }
 
     private JPanel crearBarraInferior(int sw) {
@@ -189,10 +199,14 @@ public class PantallaCombate extends JFrame {
                     }
                 }
 
+                int valor = p.ejecutarHabilidad(idx);
+                
+                if (valor == 0) {
+                    return; 
+                }
+
                 personajeLabels[personajeActual].setIcon(
                         escalarImagen(p.getSpriteHabilidad(idx), anchoParty, altoParty));
-
-                int valor = p.ejecutarHabilidad(idx);
 
                 if (p.habilidadEsCuracion(idx)) {
                     curarAliadoAleatorio(valor);
@@ -222,7 +236,7 @@ public class PantallaCombate extends JFrame {
         barra.add(defender);
         barra.add(habil);
         barra.add(salir);
-        barra.add(guardar); // ¡Corregido!
+        barra.add(guardar);
         return barra;
     }
    
@@ -250,6 +264,7 @@ public class PantallaCombate extends JFrame {
         turnoJefe();
 
         if (!verificarDerrota()) {
+            regenerarManaDescanso(personajeActual); 
             siguientePersonaje();
             actualizarPantalla();
         }
@@ -291,7 +306,6 @@ public class PantallaCombate extends JFrame {
 
             jefeLabel.setIcon(escalarImagen("imagenes/jefe_ataque.png", tamanoJefe, tamanoJefe));
 
-         
             int vivosCount = 0;
             for (int i = 0; i < personajesObjeto.length; i++) {
                 if (personajesObjeto[i].estaVivo()) {
@@ -311,12 +325,14 @@ public class PantallaCombate extends JFrame {
                         if (contador == objetivo) {
 
                             Personaje obj = personajesObjeto[i];
-
+                            
+                            int danioBase = jefe.calcularDanoFinal(); 
                             int danio;
+
+                            danio = Math.max(1, danioBase - obj.getDefensa());
+
                             if (obj.estado.equals("DEFENDIENDO")) {
-                                danio = Math.max(5, jefe.calcularDanoFinal() - obj.getDefensa());
-                            } else {
-                                danio = jefe.calcularDanoFinal();
+                                danio = Math.max(1, danio / 2);
                             }
 
                             obj.recibirDanio(danio);
@@ -372,7 +388,6 @@ public class PantallaCombate extends JFrame {
     }
 
     private void siguientePersonaje() {
-
         do {
             personajeActual = (personajeActual + 1) % personajesObjeto.length;
         } while (!personajesObjeto[personajeActual].estaVivo());
@@ -383,11 +398,18 @@ public class PantallaCombate extends JFrame {
         for (int i = 0; i < personajesObjeto.length; i++) {
 
             Personaje p = personajesObjeto[i];
-            String estadoStr = p.estaVivo() ? p.estado.toUpperCase() : "DERROTADO";
+            
+            String estadoStr = p.estaVivo() ? "VIVO" : "DERROTADO";
             String manaTexto = "";
+            
             if (p instanceof Mago) {
-                Mago mago = (Mago) p;
-                manaTexto = "Mana: " + mago.getMana() + "<br>";
+                manaTexto = "Mana: " + ((Mago) p).getMana() + "<br>";
+            } else if (p instanceof Caballero) {
+                manaTexto = "Mana: " + ((Caballero) p).getMana() + "<br>";
+            } else if (p instanceof Arquera) {
+                manaTexto = "Mana: " + ((Arquera) p).getMana() + "<br>";
+            } else if (p instanceof Curandera) {
+                manaTexto = "Mana: " + ((Curandera) p).getMana() + "<br>";
             }
 
             if (i == personajeActual) {
@@ -479,4 +501,4 @@ public class PantallaCombate extends JFrame {
             JOptionPane.showMessageDialog(this, "Error al cargar la partida");
         }
     }
-} 
+}

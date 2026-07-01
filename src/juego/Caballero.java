@@ -1,20 +1,39 @@
 package juego;
 
-public class Caballero extends Personaje {
+import javax.swing.JOptionPane;
 
-	public Caballero() {
-	    super(
-	            "Caballero",
-	            150,
-	            25 + Tienda.ataqueCaballero,
-	            10 + Tienda.defensaCaballero,
-	            8,
-	            1.0);
-	}
+public class Caballero extends Personaje {
+	
+    private int mana;
+    private int energia;
+
+    public Caballero() {
+        super(
+                "Caballero",
+                150,
+                30 + Tienda.ataqueCaballero,
+                10 + Tienda.defensaCaballero,
+                8,
+                1.0);
+        
+        mana = 100;
+        energia = 20;
+    }
+
+    public int getMana() {
+        return mana;
+    }
+
+    public void regenerarMana() {
+        mana += energia;
+        if (mana > 100) {
+            mana = 100;
+        }
+    }
 
     @Override
     public String[] getNombresHabilidades() {
-        return new String[] { "Embestida con Escudo", "Corte Supremo" };
+        return new String[] { "Embestida con Escudo (30 Maná)", "Corte Supremo (70 Maná)" };
     }
 
     @Override
@@ -29,8 +48,18 @@ public class Caballero extends Personaje {
     @Override
     public int ejecutarHabilidad(int index) {
         if (index == 0) {
+            if (mana < 30) {
+                JOptionPane.showMessageDialog(null, "No tienes suficiente maná.");
+                return 0;
+            }
+            mana -= 30;
             return (int)(calcularDanoFinal() * 1.5);  // Embestida con Escudo
         } else {
+            if (mana < 70) {
+                JOptionPane.showMessageDialog(null, "No tienes suficiente maná.");
+                return 0;
+            }
+            mana -= 70;
             return (int)(calcularDanoFinal() * 2.5);  // Corte Supremo
         }
     }
