@@ -38,7 +38,7 @@ public class MenuPrincipal extends JFrame {
         salir.setContentAreaFilled(false);
         salir.setBorderPainted(false);
 
-        // NUEVA PARTIDA
+       
         nuevaPartida.addActionListener(e -> {
 
             new SeleccionPersonaje();
@@ -47,12 +47,11 @@ public class MenuPrincipal extends JFrame {
 
         });
 
-        // CARGAR PARTIDA
         cargarPartida.addActionListener(e -> {
 
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Función disponible en futuras versiones");
+            new PantallaCombate(null);
+
+            dispose();
 
         });
 
