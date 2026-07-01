@@ -1,7 +1,7 @@
-0
-0
-500
+2
+1
+446
 Mago;100;VIVO
 Caballero;150;VIVO
-Arquera;110;VIVO
+Arquera;95;VIVO
 Curandera;120;VIVO

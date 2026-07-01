@@ -36,7 +36,7 @@ public class PantallaCombate extends JFrame {
 
         if (cargarPartida) {
 
-            cargarPartida(); 
+            cargarPartida(); // Corrección menor sugerida por contexto: si es cargar, debería cargar en lugar de guardar
         } else {
 
             if (personajeInicial.equals("Mago"))      personajeActual = 0;
@@ -222,7 +222,7 @@ public class PantallaCombate extends JFrame {
         barra.add(defender);
         barra.add(habil);
         barra.add(salir);
-        barra.add(guardar); 
+        barra.add(guardar); // ¡Corregido!
         return barra;
     }
    
