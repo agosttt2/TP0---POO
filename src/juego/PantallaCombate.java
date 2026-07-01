@@ -3,6 +3,7 @@ package juego;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.util.Scanner;
 public class PantallaCombate extends JFrame {
 
     private Personaje[] personajesObjeto = {
@@ -29,12 +30,23 @@ public class PantallaCombate extends JFrame {
 
 	private AbstractButton guardarPartida;
 
-    public PantallaCombate(String personajeInicial) {
+	public PantallaCombate(String personajeInicial) {
+	    this(personajeInicial, false);
+	}
 
-        if (personajeInicial.equals("Mago"))      personajeActual = 0;
-        if (personajeInicial.equals("Caballero")) personajeActual = 1;
-        if (personajeInicial.equals("Arquera"))   personajeActual = 2;
-        if (personajeInicial.equals("Curandera")) personajeActual = 3;
+	public PantallaCombate(String personajeInicial, boolean cargarPartida) {
+
+	    if (cargarPartida) {
+
+	        guardarPartida();
+
+	    } else {
+
+	        if (personajeInicial.equals("Mago"))      personajeActual = 0;
+	        if (personajeInicial.equals("Caballero")) personajeActual = 1;
+	        if (personajeInicial.equals("Arquera"))   personajeActual = 2;
+	        if (personajeInicial.equals("Curandera")) personajeActual = 3;
+	    }
 
         setTitle("EL LEGADO DE LA SANGRE - Combate");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
@@ -453,6 +465,35 @@ public class PantallaCombate extends JFrame {
             guardarPartida();
             JOptionPane.showMessageDialog(this, "Partida guardada correctamente");
         });
+    }
+        private void cargarPartida() {
+
+            try {
+
+                Scanner lector = new Scanner(new File("partida_guardada.txt"));
+
+                personajeActual = Integer.parseInt(lector.nextLine());
+                turnosJefe = Integer.parseInt(lector.nextLine());
+
+                int vidaJefeGuardada = Integer.parseInt(lector.nextLine());
+                jefe.vida = vidaJefeGuardada;
+
+                for (int i = 0; i < personajesObjeto.length; i++) {
+
+                    String linea = lector.nextLine();
+                    String[] partes = linea.split(";");
+
+                    personajesObjeto[i].vida = Integer.parseInt(partes[1]);
+                    personajesObjeto[i].estado = partes[2];
+                }
+
+                lector.close();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error al cargar la partida");
+            }
+ 
     }
 
     }
