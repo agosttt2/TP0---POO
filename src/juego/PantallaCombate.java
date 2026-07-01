@@ -24,9 +24,9 @@ public class PantallaCombate extends JFrame {
     private JLabel[] panelNombre     = new JLabel[4];
     private JLabel[] panelVida       = new JLabel[4];
 
-    private int anchoParty = 175;
-    private int altoParty  = 175;
-    private int tamanoJefe = 380;
+    private int anchoParty = 320;
+    private int altoParty  = 320;
+    private int tamanoJefe = 530;
 
     public PantallaCombate(String personajeInicial) {
         this(personajeInicial, false);
@@ -56,24 +56,41 @@ public class PantallaCombate extends JFrame {
                 escalarImagen("imagenes/fondoCombate.png", sw, sh));
         fondo.setLayout(null);
 
-        int[] posX = {
-            (int)(sw * 0.18),   
-            (int)(sw * 0.11),   
-            (int)(sw * 0.20),   
-            (int)(sw * 0.04)    
-        };
-        int[] posY = {
-            (int)(sh * 0.08),  
-            (int)(sh * 0.28),   
-            (int)(sh * 0.42),   
-            (int)(sh * 0.55)    
-        };
 
-        for (int i = 0; i < personajesObjeto.length; i++) {
-            personajeLabels[i] = new JLabel();
-            personajeLabels[i].setBounds(posX[i], posY[i], anchoParty, altoParty);
-            fondo.add(personajeLabels[i]);
-        }
+     int[] posX = {
+         (int)(sw * 0.28),
+         (int)(sw * 0.27), 
+         (int)(sw * 0.27), 
+         (int)(sw * 0.27)  
+     };
+
+     int[] posY = {
+         (int)(sh * 0.11), 
+         (int)(sh * 0.20), 
+         (int)(sh * 0.30), 
+         (int)(sh * 0.45),
+     };
+
+     for (int i = 0; i < personajesObjeto.length; i++) {
+         personajeLabels[i] = new JLabel();
+
+         personajeLabels[i].setBounds(
+                 posX[i],
+                 posY[i],
+                 anchoParty,
+                 altoParty
+         );
+
+         fondo.add(personajeLabels[i]);
+     }
+
+     // Orden de superposición:
+     // Curandera > Arquera > Caballero > Mago
+
+     fondo.setComponentZOrder(personajeLabels[0], 3); // Mago atrás
+     fondo.setComponentZOrder(personajeLabels[1], 2); // Caballero
+     fondo.setComponentZOrder(personajeLabels[2], 1); // Arquera
+     fondo.setComponentZOrder(personajeLabels[3], 0); // Curandera delante
 
         jefeLabel = new JLabel();
         jefeLabel.setBounds((int)(sw * 0.62), (int)(sh * 0.08), tamanoJefe, tamanoJefe);
