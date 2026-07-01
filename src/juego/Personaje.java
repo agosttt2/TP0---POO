@@ -39,6 +39,25 @@ public abstract class Personaje {
     public int getNivel()         { return nivel; }
     public int getExperiencia()   { return experiencia; }
     public String getEstado()     { return estado; }
+    public int getAtaqueBase() {
+        return ataqueBase;
+    }
+
+    public double getMultiplicadorArma() {
+        return multiplicadorArma;
+    }
+
+    public void aumentarAtaque(int cantidad) {
+        ataqueBase += cantidad;
+    }
+
+    public void aumentarDefensa(int cantidad) {
+        defensa += cantidad;
+    }
+
+    public void mejorarArma(double aumento) {
+        multiplicadorArma += aumento;
+    }
 
     public int getExperienciaNecesaria() {
         return nivel * 100;

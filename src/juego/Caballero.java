@@ -2,9 +2,15 @@ package juego;
 
 public class Caballero extends Personaje {
 
-    public Caballero() {
-        super("Caballero", 150, 25, 10, 8, 1.0);
-    }
+	public Caballero() {
+	    super(
+	            "Caballero",
+	            150,
+	            25 + Tienda.ataqueCaballero,
+	            10 + Tienda.defensaCaballero,
+	            8,
+	            1.0);
+	}
 
     @Override
     public String[] getNombresHabilidades() {

@@ -2,9 +2,15 @@ package juego;
 
 public class Mago extends Personaje {
 
-    public Mago() {
-        super("Mago", 100, 35, 4, 12, 1.0);
-    }
+	public Mago() {
+	    super(
+	            "Mago",
+	            100,
+	            35 + Tienda.ataqueMago,
+	            4,
+	            12,
+	            1.0);
+	}
 
     @Override
     public String[] getNombresHabilidades() {

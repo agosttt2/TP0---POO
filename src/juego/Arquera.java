@@ -2,9 +2,15 @@ package juego;
 
 public class Arquera extends Personaje {
 
-    public Arquera() {
-        super("Arquera", 110, 30, 5, 15, 1.0);
-    }
+	public Arquera() {
+	    super(
+	            "Arquera",
+	            110,
+	            30 + Tienda.ataqueArquera,
+	            5,
+	            15,
+	            1.0);
+	}
 
     @Override
     public String[] getNombresHabilidades() {
