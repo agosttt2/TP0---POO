@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.util.Scanner;
+
 public class PantallaCombate extends JFrame {
 
     private Personaje[] personajesObjeto = {
@@ -23,30 +24,27 @@ public class PantallaCombate extends JFrame {
     private JLabel[] panelNombre     = new JLabel[4];
     private JLabel[] panelVida       = new JLabel[4];
 
- 
     private int anchoParty = 175;
     private int altoParty  = 175;
     private int tamanoJefe = 380;
 
-	private AbstractButton guardarPartida;
+    public PantallaCombate(String personajeInicial) {
+        this(personajeInicial, false);
+    }
 
-	public PantallaCombate(String personajeInicial) {
-	    this(personajeInicial, false);
-	}
+    public PantallaCombate(String personajeInicial, boolean cargarPartida) {
 
-	public PantallaCombate(String personajeInicial, boolean cargarPartida) {
+        if (cargarPartida) {
 
-	    if (cargarPartida) {
+            cargarPartida(); // Corrección menor sugerida por contexto: si es cargar, debería cargar en lugar de guardar
 
-	        guardarPartida();
+        } else {
 
-	    } else {
-
-	        if (personajeInicial.equals("Mago"))      personajeActual = 0;
-	        if (personajeInicial.equals("Caballero")) personajeActual = 1;
-	        if (personajeInicial.equals("Arquera"))   personajeActual = 2;
-	        if (personajeInicial.equals("Curandera")) personajeActual = 3;
-	    }
+            if (personajeInicial.equals("Mago"))      personajeActual = 0;
+            if (personajeInicial.equals("Caballero")) personajeActual = 1;
+            if (personajeInicial.equals("Arquera"))   personajeActual = 2;
+            if (personajeInicial.equals("Curandera")) personajeActual = 3;
+        }
 
         setTitle("EL LEGADO DE LA SANGRE - Combate");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
@@ -61,7 +59,6 @@ public class PantallaCombate extends JFrame {
                 escalarImagen("imagenes/fondoCombate.png", sw, sh));
         fondo.setLayout(null);
 
-    
         int[] posX = {
             (int)(sw * 0.18),   
             (int)(sw * 0.11),   
@@ -81,18 +78,15 @@ public class PantallaCombate extends JFrame {
             fondo.add(personajeLabels[i]);
         }
 
-
         jefeLabel = new JLabel();
         jefeLabel.setBounds((int)(sw * 0.62), (int)(sh * 0.08), tamanoJefe, tamanoJefe);
         fondo.add(jefeLabel);
 
-      
         lblVidaJefe = new JLabel();
         lblVidaJefe.setForeground(Color.RED);
         lblVidaJefe.setFont(new Font("Arial", Font.BOLD, 22));
         lblVidaJefe.setBounds((int)(sw * 0.62), (int)(sh * 0.03), 300, 30);
         fondo.add(lblVidaJefe);
-
 
         JPanel barraInferior = crearBarraInferior(sw);
         barraInferior.setBounds(0, sh - 140, sw, 140);
@@ -137,8 +131,8 @@ public class PantallaCombate extends JFrame {
         JButton habil    = crearBoton("HABILIDAD", sw - 350, 70, 150, 40);
         JButton salir    = crearBoton("SALIR",     sw - 190, 70, 150, 40);
         JButton guardar  = crearBoton("GUARDAR",   sw - 510, 20, 150, 40);
+        
         atacar.addActionListener(e -> {
-
             Personaje p = personajesObjeto[personajeActual];
 
             personajeLabels[personajeActual].setIcon(
@@ -157,10 +151,8 @@ public class PantallaCombate extends JFrame {
             t.setRepeats(false);
             t.start();
         });
-        
 
         defender.addActionListener(e -> {
-
             Personaje p = personajesObjeto[personajeActual];
 
             personajeLabels[personajeActual].setIcon(
@@ -178,10 +170,8 @@ public class PantallaCombate extends JFrame {
         });
 
         habil.addActionListener(e -> {
-
             Personaje p = personajesObjeto[personajeActual];
             String[] habs = p.getNombresHabilidades();
-
            
             String elegida = (String) JOptionPane.showInputDialog(
                     this,
@@ -193,8 +183,6 @@ public class PantallaCombate extends JFrame {
                     habs[0]);
 
             if (elegida != null) {
-
-              
                 int idx = 0;
                 for (int i = 0; i < habs.length; i++) {
                     if (habs[i].equals(elegida)) {
@@ -235,7 +223,7 @@ public class PantallaCombate extends JFrame {
         barra.add(defender);
         barra.add(habil);
         barra.add(salir);
-        barra.add(guardarPartida);
+        barra.add(guardar); // ¡Corregido!
         return barra;
     }
    
@@ -438,14 +426,13 @@ public class PantallaCombate extends JFrame {
         return b;
     }
     
-
     private ImageIcon escalarImagen(String ruta, int w, int h) {
         return new ImageIcon(
                 new ImageIcon(ruta).getImage()
                         .getScaledInstance(w, h, Image.SCALE_SMOOTH));
     }
-    private void guardarPartida() {
 
+    private void guardarPartida() {
         try (PrintWriter pw = new PrintWriter(new FileWriter("partida_guardada.txt"))) {
 
             pw.println(personajeActual);
@@ -460,41 +447,32 @@ public class PantallaCombate extends JFrame {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al guardar la partida");
         }
-        
-        guardarPartida.addActionListener(e -> {
-            guardarPartida();
-            JOptionPane.showMessageDialog(this, "Partida guardada correctamente");
-        });
+        // ¡Bloque duplicado y erróneo eliminado de aquí!
     }
-        private void cargarPartida() {
 
-            try {
+    private void cargarPartida() {
+        try {
+            Scanner lector = new Scanner(new File("partida_guardada.txt"));
 
-                Scanner lector = new Scanner(new File("partida_guardada.txt"));
+            personajeActual = Integer.parseInt(lector.nextLine());
+            turnosJefe = Integer.parseInt(lector.nextLine());
 
-                personajeActual = Integer.parseInt(lector.nextLine());
-                turnosJefe = Integer.parseInt(lector.nextLine());
+            int vidaJefeGuardada = Integer.parseInt(lector.nextLine());
+            jefe.vida = vidaJefeGuardada;
 
-                int vidaJefeGuardada = Integer.parseInt(lector.nextLine());
-                jefe.vida = vidaJefeGuardada;
+            for (int i = 0; i < personajesObjeto.length; i++) {
+                String linea = lector.nextLine();
+                String[] partes = linea.split(";");
 
-                for (int i = 0; i < personajesObjeto.length; i++) {
-
-                    String linea = lector.nextLine();
-                    String[] partes = linea.split(";");
-
-                    personajesObjeto[i].vida = Integer.parseInt(partes[1]);
-                    personajesObjeto[i].estado = partes[2];
-                }
-
-                lector.close();
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error al cargar la partida");
+                personajesObjeto[i].vida = Integer.parseInt(partes[1]);
+                personajesObjeto[i].estado = partes[2];
             }
- 
-    }
 
+            lector.close();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al cargar la partida");
+        }
     }
- 
+} 

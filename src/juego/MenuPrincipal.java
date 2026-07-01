@@ -1,6 +1,7 @@
 package juego;
 
 import javax.swing.*;
+import java.io.File;
 
 public class MenuPrincipal extends JFrame {
 
@@ -50,9 +51,18 @@ public class MenuPrincipal extends JFrame {
         // CARGAR PARTIDA
         cargarPartida.addActionListener(e -> {
 
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Función disponible en futuras versiones");
+            File archivoGuardado = new File("partida_guardada.txt");
+            
+            if (archivoGuardado.exists()) {
+                
+                new PantallaCombate("", true); 
+                
+                dispose(); 
+                
+            } else {
+
+                JOptionPane.showMessageDialog(this, "No hay ninguna partida guardada todavía.");
+            }
 
         });
 
