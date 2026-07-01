@@ -1,9 +1,17 @@
 package juego;
 
+import javax.swing.JOptionPane;
+
 public class Mago extends Personaje {
+	
+	private int mana;
 
     public Mago() {
         super("Mago", 100, 35, 4, 12, 1.0);
+        mana = 100;
+    }
+    public int getMana() {
+    	return mana;
     }
 
     @Override
@@ -22,15 +30,37 @@ public class Mago extends Personaje {
 
     @Override
     public int ejecutarHabilidad(int index) {
-        if (index == 0) {
-            return (int)(calcularDanoFinal() * 1.6);  // Bola de fuego
-        } else {
-            return (int)(calcularDanoFinal() * 2.8);  // Invocación
+        if (index == 0)
+        {if (mana < 20) {
+            JOptionPane.showMessageDialog(null, "No tienes suficiente maná.");
+            return 0;
+        }
+
+        mana -= 20;
+        
+        System.out.println("Maná restante: " + mana);
+        
+            return (int)(calcularDanoFinal() * 1.6);  
+        } else 
+        {if (mana < 40) {
+            JOptionPane.showMessageDialog(null, "No tienes suficiente maná.");
+            return 0;
+        }
+
+        mana -= 40;
+        
+        System.out.println("Maná restante: " + mana);
+        
+            return (int)(calcularDanoFinal() * 2.8);  
+
         }
     }
 
     @Override
     public int usarHabilidad() {
         return ejecutarHabilidad(0);
+       
     }
 }
+
+

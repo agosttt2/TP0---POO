@@ -1,6 +1,7 @@
 package juego;
 
 import javax.swing.*;
+import java.io.File;
 
 public class MenuPrincipal extends JFrame {
 
@@ -38,7 +39,7 @@ public class MenuPrincipal extends JFrame {
         salir.setContentAreaFilled(false);
         salir.setBorderPainted(false);
 
-        // NUEVA PARTIDA
+        // NuevaPartida 
         nuevaPartida.addActionListener(e -> {
 
             new SeleccionPersonaje();
@@ -47,16 +48,25 @@ public class MenuPrincipal extends JFrame {
 
         });
 
-        // CARGAR PARTIDA
+        // CargarPartida
         cargarPartida.addActionListener(e -> {
 
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Función disponible en futuras versiones");
+            File archivoGuardado = new File("partida_guardada.txt");
+            
+            if (archivoGuardado.exists()) {
+                
+                new PantallaCombate("", true); 
+                
+                dispose(); 
+                
+            } else {
+
+                JOptionPane.showMessageDialog(this, "No hay ninguna partida guardada todavía.");
+            }
 
         });
 
-        // SALIR
+        // Salir
         salir.addActionListener(e -> {
 
             System.exit(0);
