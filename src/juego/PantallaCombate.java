@@ -2,7 +2,7 @@ package juego;
 
 import javax.swing.*;
 import java.awt.*;
-
+import java.io.*;
 public class PantallaCombate extends JFrame {
 
     private Personaje[] personajesObjeto = {
@@ -22,10 +22,12 @@ public class PantallaCombate extends JFrame {
     private JLabel[] panelNombre     = new JLabel[4];
     private JLabel[] panelVida       = new JLabel[4];
 
-    // Tamaño base 140 + 25% = 175
+ 
     private int anchoParty = 175;
     private int altoParty  = 175;
     private int tamanoJefe = 380;
+
+	private AbstractButton guardarPartida;
 
     public PantallaCombate(String personajeInicial) {
 
@@ -47,19 +49,18 @@ public class PantallaCombate extends JFrame {
                 escalarImagen("imagenes/fondoCombate.png", sw, sh));
         fondo.setLayout(null);
 
-        // ── Posiciones de los sprites ────────────────────────────────────────
-        // Formación diagonal: Mago arriba, Caballero, Arquera, Curandera abajo
+    
         int[] posX = {
-            (int)(sw * 0.18),   // Mago
-            (int)(sw * 0.11),   // Caballero
-            (int)(sw * 0.20),   // Arquera
-            (int)(sw * 0.04)    // Curandera
+            (int)(sw * 0.18),   
+            (int)(sw * 0.11),   
+            (int)(sw * 0.20),   
+            (int)(sw * 0.04)    
         };
         int[] posY = {
-            (int)(sh * 0.08),   // Mago
-            (int)(sh * 0.28),   // Caballero
-            (int)(sh * 0.42),   // Arquera
-            (int)(sh * 0.55)    // Curandera
+            (int)(sh * 0.08),  
+            (int)(sh * 0.28),   
+            (int)(sh * 0.42),   
+            (int)(sh * 0.55)    
         };
 
         for (int i = 0; i < personajesObjeto.length; i++) {
@@ -68,19 +69,19 @@ public class PantallaCombate extends JFrame {
             fondo.add(personajeLabels[i]);
         }
 
-        // Jefe a la derecha
+
         jefeLabel = new JLabel();
         jefeLabel.setBounds((int)(sw * 0.62), (int)(sh * 0.08), tamanoJefe, tamanoJefe);
         fondo.add(jefeLabel);
 
-        // Vida del jefe encima de su sprite
+      
         lblVidaJefe = new JLabel();
         lblVidaJefe.setForeground(Color.RED);
         lblVidaJefe.setFont(new Font("Arial", Font.BOLD, 22));
         lblVidaJefe.setBounds((int)(sw * 0.62), (int)(sh * 0.03), 300, 30);
         fondo.add(lblVidaJefe);
 
-        // Barra inferior
+
         JPanel barraInferior = crearBarraInferior(sw);
         barraInferior.setBounds(0, sh - 140, sw, 140);
         fondo.add(barraInferior);
@@ -123,7 +124,7 @@ public class PantallaCombate extends JFrame {
         JButton defender = crearBoton("DEFENDER",  sw - 190, 20, 150, 40);
         JButton habil    = crearBoton("HABILIDAD", sw - 350, 70, 150, 40);
         JButton salir    = crearBoton("SALIR",     sw - 190, 70, 150, 40);
-
+        JButton guardar  = crearBoton("GUARDAR",   sw - 510, 20, 150, 40);
         atacar.addActionListener(e -> {
 
             Personaje p = personajesObjeto[personajeActual];
@@ -144,6 +145,7 @@ public class PantallaCombate extends JFrame {
             t.setRepeats(false);
             t.start();
         });
+        
 
         defender.addActionListener(e -> {
 
@@ -168,7 +170,7 @@ public class PantallaCombate extends JFrame {
             Personaje p = personajesObjeto[personajeActual];
             String[] habs = p.getNombresHabilidades();
 
-            // Mostramos las habilidades disponibles para elegir
+           
             String elegida = (String) JOptionPane.showInputDialog(
                     this,
                     "Selecciona una habilidad:",
@@ -180,7 +182,7 @@ public class PantallaCombate extends JFrame {
 
             if (elegida != null) {
 
-                // Buscamos el índice de la habilidad elegida
+              
                 int idx = 0;
                 for (int i = 0; i < habs.length; i++) {
                     if (habs[i].equals(elegida)) {
@@ -211,15 +213,20 @@ public class PantallaCombate extends JFrame {
         });
 
         salir.addActionListener(e -> System.exit(0));
-
+        
+        guardar.addActionListener(e -> {
+            guardarPartida();
+            JOptionPane.showMessageDialog(this, "Partida guardada correctamente");
+        });
+        
         barra.add(atacar);
         barra.add(defender);
         barra.add(habil);
         barra.add(salir);
-
+        barra.add(guardarPartida);
         return barra;
     }
-
+   
     private void finalizarTurno() {
 
         if (!jefe.estaVivo()) {
@@ -418,10 +425,35 @@ public class PantallaCombate extends JFrame {
         b.setBackground(new Color(212, 175, 55));
         return b;
     }
+    
 
     private ImageIcon escalarImagen(String ruta, int w, int h) {
         return new ImageIcon(
                 new ImageIcon(ruta).getImage()
                         .getScaledInstance(w, h, Image.SCALE_SMOOTH));
     }
-}
+    private void guardarPartida() {
+
+        try (PrintWriter pw = new PrintWriter(new FileWriter("partida_guardada.txt"))) {
+
+            pw.println(personajeActual);
+            pw.println(turnosJefe);
+            pw.println(jefe.getVida());
+
+            for (Personaje p : personajesObjeto) {
+                pw.println(p.getNombre() + ";" + p.getVida() + ";" + p.estado);
+            }
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al guardar la partida");
+        }
+        
+        guardarPartida.addActionListener(e -> {
+            guardarPartida();
+            JOptionPane.showMessageDialog(this, "Partida guardada correctamente");
+        });
+    }
+
+    }
+ 
