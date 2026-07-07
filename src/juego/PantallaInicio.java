@@ -10,7 +10,10 @@ public class PantallaInicio extends JFrame {
         setTitle("El Legado de la Sangre");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
+<<<<<<< HEAD
        
+=======
+>>>>>>> d7c497ce7ccda5f8c912299555ea3c3c07d75d65
         setUndecorated(true);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -23,7 +26,10 @@ public class PantallaInicio extends JFrame {
         fondo.setBounds(0, 0, screenW, screenH);
 
         JButton comenzar = new JButton();
+<<<<<<< HEAD
         
+=======
+>>>>>>> d7c497ce7ccda5f8c912299555ea3c3c07d75d65
         comenzar.setBounds(0, 0, screenW, screenH);
         comenzar.setOpaque(false);
         comenzar.setContentAreaFilled(false);
