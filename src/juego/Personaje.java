@@ -26,7 +26,7 @@ public abstract class Personaje {
         this.estado           = "VIVO";
     }
 
-    // Daño final = ataque base multiplicado por el arma equipada
+   
     public int calcularDanoFinal() {
         return (int)(ataqueBase * multiplicadorArma);
     }
@@ -76,17 +76,16 @@ public abstract class Personaje {
         return vida > 0;
     }
 
-    // Cada subclase define sus habilidades
+
     public abstract String[] getNombresHabilidades();
     public abstract String getSpriteHabilidad(int index);
     public abstract int ejecutarHabilidad(int index);
 
-    // Indica si la habilidad en el índice dado es de curación
-    // Por defecto false; Curandera lo sobreescribe
+
     public boolean habilidadEsCuracion(int index) {
         return false;
     }
 
-    // Dejamos usarHabilidad abstracto para que cada clase lo implemente
+    
     public abstract int usarHabilidad();
 }
