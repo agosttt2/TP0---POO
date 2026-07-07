@@ -39,11 +39,7 @@ public class MenuPrincipal extends JFrame {
         salir.setContentAreaFilled(false);
         salir.setBorderPainted(false);
 
-<<<<<<< HEAD
-       
-=======
-        // NuevaPartida 
->>>>>>> d7c497ce7ccda5f8c912299555ea3c3c07d75d65
+
         nuevaPartida.addActionListener(e -> {
 
             new SeleccionPersonaje();
@@ -52,13 +48,11 @@ public class MenuPrincipal extends JFrame {
 
         });
 
-<<<<<<< HEAD
-        cargarPartida.addActionListener(e -> {
 
             new PantallaCombate(null);
 
             dispose();
-=======
+
         // CargarPartida
         cargarPartida.addActionListener(e -> {
 
@@ -74,7 +68,7 @@ public class MenuPrincipal extends JFrame {
 
                 JOptionPane.showMessageDialog(this, "No hay ninguna partida guardada todavía.");
             }
->>>>>>> d7c497ce7ccda5f8c912299555ea3c3c07d75d65
+
 
         });
 
