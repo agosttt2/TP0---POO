@@ -3,7 +3,7 @@ package juego.modelo;
 public class Jefe extends Personaje {
 
     public Jefe() {
-        super("Jefe Final", 500, 50, 8, 6, 1.0);
+        super("Jefe Final", 750, 45, 8, 6, 1.0);
     }
 
     @Override
@@ -18,6 +18,12 @@ public class Jefe extends Personaje {
 
     @Override
     public int ejecutarHabilidad(int index) {
-        return (int) (calcularDanoFinal() * 2.0);
+        return (int)(calcularDanoFinal() * 2.0);
     }
+
+    @Override
+    public void regenerarMana() {}
+
+    @Override
+    public int getMana() { return 0; }
 }

@@ -1,22 +1,22 @@
 package juego.combate;
 
-import juego.modelo.Personaje;
-
 public class ResultadoHabilidad {
-    private final boolean manaInsuficiente;
-    private final boolean curacion;
-    private final int valor;
-    private final Personaje objetivo;
 
-    public ResultadoHabilidad(boolean manaInsuficiente, boolean curacion, int valor, Personaje objetivo) {
+    public final boolean manaInsuficiente;
+    public final boolean esCuracion;
+    public final String  nombreHabilidad;
+    public final int     valor;
+    public final String  sprite;
+    public final int     indiceObjetivo;
+
+    public ResultadoHabilidad(boolean manaInsuficiente, boolean esCuracion,
+                              String nombreHabilidad, int valor,
+                              String sprite, int indiceObjetivo) {
         this.manaInsuficiente = manaInsuficiente;
-        this.curacion = curacion;
-        this.valor = valor;
-        this.objetivo = objetivo;
+        this.esCuracion       = esCuracion;
+        this.nombreHabilidad  = nombreHabilidad;
+        this.valor            = valor;
+        this.sprite           = sprite;
+        this.indiceObjetivo   = indiceObjetivo;
     }
-
-    public boolean manaInsuficiente() { return manaInsuficiente; }
-    public boolean esCuracion() { return curacion; }
-    public int getValor() { return valor; }
-    public Personaje getObjetivo() { return objetivo; }
 }

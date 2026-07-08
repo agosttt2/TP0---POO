@@ -40,7 +40,6 @@ public class PantallaTienda extends JFrame {
         JLabel fondo = new JLabel(new ImageIcon(imagenEscalada));
         fondo.setLayout(null);
 
-        // Capa oscura semitransparente para que las tarjetas se lean bien encima del arte
         JPanel velo = new JPanel();
         velo.setBounds(0, 0, sw, sh);
         velo.setBackground(new Color(0, 0, 0, 90));

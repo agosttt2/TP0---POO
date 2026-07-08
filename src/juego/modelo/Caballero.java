@@ -4,24 +4,24 @@ import juego.item.Tienda;
 
 public class Caballero extends Personaje {
 
-    private static final int COSTO_MANA_BASICA = 30;
+    private static final int COSTO_MANA_BASICA  = 30;
     private static final int COSTO_MANA_SUPREMA = 70;
+    private static final int REGENERACION       = 30;
 
     private int mana;
-    private final int regeneracionMana;
 
     public Caballero() {
         super("Caballero", 150, 30, 10, 8, 1.0);
         Tienda.getInventario().aplicarEquipoA(this);
-
         mana = 100;
-        regeneracionMana = 20;
     }
 
+    @Override
     public int getMana() { return mana; }
 
+    @Override
     public void regenerarMana() {
-        mana = Math.min(100, mana + regeneracionMana);
+        mana = Math.min(100, mana + REGENERACION);
     }
 
     @Override
@@ -39,11 +39,11 @@ public class Caballero extends Personaje {
         if (index == 0) {
             if (mana < COSTO_MANA_BASICA) return -1;
             mana -= COSTO_MANA_BASICA;
-            return (int) (calcularDanoFinal() * 1.5);
+            return (int)(calcularDanoFinal() * 1.5);
         } else {
             if (mana < COSTO_MANA_SUPREMA) return -1;
             mana -= COSTO_MANA_SUPREMA;
-            return (int) (calcularDanoFinal() * 2.5);
+            return (int)(calcularDanoFinal() * 2.5);
         }
     }
 }

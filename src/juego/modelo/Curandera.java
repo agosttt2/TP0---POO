@@ -5,23 +5,23 @@ import juego.item.Tienda;
 public class Curandera extends Personaje {
 
     private static final int COSTO_MANA = 45;
-    private static final int CURACION = 30;
+    private static final int CURACION   = 30;
+    private static final int REGENERACION = 20;
 
     private int mana;
-    private final int regeneracionMana;
 
     public Curandera() {
         super("Curandera", 120, 15, 4, 10, 1.0);
         Tienda.getInventario().aplicarEquipoA(this);
-
         mana = 100;
-        regeneracionMana = 10;
     }
 
+    @Override
     public int getMana() { return mana; }
 
+    @Override
     public void regenerarMana() {
-        mana = Math.min(100, mana + regeneracionMana);
+        mana = Math.min(100, mana + REGENERACION);
     }
 
     @Override

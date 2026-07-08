@@ -1,142 +1,128 @@
 package juego.modelo;
 
+
 public abstract class Personaje {
 
-    private final String nombre;
-    private int vida;
-    private final int vidaMaxima;
-    private int ataqueBase;
-    private int defensa;
-    private final int velocidad;
-    private int nivel;
-    private int experiencia;
-    private double multiplicadorArma;
-    private EstadoPersonaje estado;
+    protected String nombre;
+    public String estado;
+    protected int vida;
+    protected int vidaMaxima;
+    protected int ataqueBase;
+    protected int defensa;
+    protected int velocidad;
+    protected int nivel;
+    protected int experiencia;
+    protected double multiplicadorArma;
 
-    protected Personaje(String nombre, int vida, int ataqueBase, int defensa, int velocidad, double multiplicadorArma) {
-        this.nombre = nombre;
-        this.vida = vida;
-        this.vidaMaxima = vida;
-        this.ataqueBase = ataqueBase;
-        this.defensa = defensa;
-        this.velocidad = velocidad;
-        this.multiplicadorArma = multiplicadorArma;
-        this.nivel = 1;
-        this.experiencia = 0;
-        this.estado = EstadoPersonaje.VIVO;
+    private int ataqueBaseOriginal;
+    private int defensaBaseOriginal;
+
+    private static final int NIVEL_MAXIMO = 3;
+
+    public Personaje(String nombre, int vida, int ataqueBase, int defensa, int velocidad, double multiplicadorArma) {
+        this.nombre              = nombre;
+        this.vida                = vida;
+        this.vidaMaxima          = vida;
+        this.ataqueBase          = ataqueBase;
+        this.ataqueBaseOriginal  = ataqueBase;
+        this.defensa             = defensa;
+        this.defensaBaseOriginal = defensa;
+        this.velocidad           = velocidad;
+        this.multiplicadorArma   = multiplicadorArma;
+        this.nivel               = 1;
+        this.experiencia         = 0;
+        this.estado              = "VIVO";
     }
 
     public int calcularDanoFinal() {
-        return (int) (ataqueBase * multiplicadorArma);
+        return (int)(ataqueBase * multiplicadorArma);
     }
 
-    public void recibirAtaque(int danioBase) {
-        int reduccion = defensa + (estaDefendiendo() ? defensa : 0);
-        int danioFinal = Math.max(1, danioBase - reduccion);
-        aplicarDanio(danioFinal);
-        if (estaDefendiendo()) {
-            dejarDeDefender();
-        }
-    }
-
-    private void aplicarDanio(int danio) {
-        vida -= danio;
-        if (vida < 0) {
-            vida = 0;
-        }
-        if (vida == 0) {
-            estado = EstadoPersonaje.MUERTO;
-        }
-    }
-
-    public void curar(int cantidad) {
-        vida += cantidad;
-        if (vida > vidaMaxima) {
-            vida = vidaMaxima;
-        }
-        if (vida > 0 && estado == EstadoPersonaje.MUERTO) {
-            estado = EstadoPersonaje.VIVO;
-        }
-    }
-
-    public void defender() {
-        if (estaVivo()) {
-            estado = EstadoPersonaje.DEFENDIENDO;
-        }
-    }
-
-    public void dejarDeDefender() {
-        if (estado == EstadoPersonaje.DEFENDIENDO) {
-            estado = EstadoPersonaje.VIVO;
-        }
-    }
-
-    public boolean estaDefendiendo() {
-        return estado == EstadoPersonaje.DEFENDIENDO;
-    }
-
-    public boolean estaVivo() {
-        return vida > 0;
-    }
-
-    /**
-     * @return true si con esta experiencia subió (uno o más) niveles.
-     */
-    public boolean ganarExperiencia(int xp) {
-        experiencia += xp;
-        boolean subioNivel = false;
-        while (experiencia >= getExperienciaNecesaria()) {
-            experiencia -= getExperienciaNecesaria();
-            nivel++;
-            subioNivel = true;
-        }
-        return subioNivel;
-    }
+    public String getNombre()            { return nombre; }
+    public int    getVida()              { return vida; }
+    public int    getVidaMaxima()        { return vidaMaxima; }
+    public int    getDefensa()           { return defensa; }
+    public int    getVelocidad()         { return velocidad; }
+    public int    getNivel()             { return nivel; }
+    public int    getExperiencia()       { return experiencia; }
+    public String getEstado()            { return estado; }
+    public int    getAtaqueBase()        { return ataqueBase; }
+    public double getMultiplicadorArma() { return multiplicadorArma; }
 
     public int getExperienciaNecesaria() {
         return nivel * 100;
     }
 
     public void aumentarAtaque(int cantidad) {
-        ataqueBase += cantidad;
+        ataqueBase          += cantidad;
+        ataqueBaseOriginal  += cantidad;
     }
 
     public void aumentarDefensa(int cantidad) {
-        defensa += cantidad;
+        defensa              += cantidad;
+        defensaBaseOriginal  += cantidad;
     }
 
     public void mejorarArma(double aumento) {
         multiplicadorArma += aumento;
     }
 
-    public void restaurarEstado(int vida, EstadoPersonaje estado, int nivel, int experiencia) {
-        this.vida = Math.min(vida, vidaMaxima);
-        this.estado = estado;
-        this.nivel = Math.max(1, nivel);
-        this.experiencia = Math.max(0, experiencia);
+    public void recibirAtaque(int danio) {
+        vida -= Math.max(1, danio - defensa);
+        if (vida < 0) vida = 0;
+        if (vida == 0) estado = "MUERTO";
     }
 
-    public String getNombre() { return nombre; }
-    public int getVida() { return vida; }
-    public int getVidaMaxima() { return vidaMaxima; }
-    public int getAtaqueBase() { return ataqueBase; }
-    public int getDefensa() { return defensa; }
-    public int getVelocidad() { return velocidad; }
-    public int getNivel() { return nivel; }
-    public int getExperiencia() { return experiencia; }
-    public double getMultiplicadorArma() { return multiplicadorArma; }
-    public EstadoPersonaje getEstado() { return estado; }
+    public void curar(int cantidad) {
+        vida += cantidad;
+        if (vida > vidaMaxima) vida = vidaMaxima;
+        if (vida > 0 && estado.equals("MUERTO")) estado = "VIVO";
+    }
 
-    public abstract String[] getNombresHabilidades();
-    public abstract String getSpriteHabilidad(int index);
+    public boolean estaVivo() {
+        return vida > 0;
+    }
 
-    public abstract int ejecutarHabilidad(int index);
+    public boolean ganarExperiencia(int xp) {
+        if (nivel >= NIVEL_MAXIMO) return false;
 
-    public boolean habilidadEsCuracion(int index) {
+        experiencia += xp;
+
+        if (experiencia >= getExperienciaNecesaria()) {
+            experiencia -= getExperienciaNecesaria();
+            nivel++;
+            aplicarBonusNivel();
+            return true;
+        }
         return false;
     }
 
-    public int usarHabilidad() {
-        return ejecutarHabilidad(0);
+    private void aplicarBonusNivel() {
+        if (nivel == 2) {
+            ataqueBase = (int)(ataqueBaseOriginal * 1.5);
+            defensa    = (int)(defensaBaseOriginal * 1.5);
+        }
+        if (nivel == 3) {
+            ataqueBase = (int)(ataqueBaseOriginal * 2.5);
+            defensa    = (int)(defensaBaseOriginal * 2.5);
+        }
+    }
+
+    public void restaurarEstado(int vida, int nivel, int experiencia) {
+        this.vida        = vida;
+        this.nivel       = nivel;
+        this.experiencia = experiencia;
+        this.estado      = vida > 0 ? "VIVO" : "MUERTO";
+        aplicarBonusNivel();
+    }
+
+    public abstract String[] getNombresHabilidades();
+    public abstract String   getSpriteHabilidad(int index);
+    public abstract int      ejecutarHabilidad(int index);
+    public abstract void     regenerarMana();
+    public abstract int      getMana();
+
+    public boolean habilidadEsCuracion(int index) {
+        return false;
     }
 }

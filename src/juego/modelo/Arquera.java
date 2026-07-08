@@ -4,24 +4,24 @@ import juego.item.Tienda;
 
 public class Arquera extends Personaje {
 
-    private static final int COSTO_MANA_TRIPLE = 35;
+    private static final int COSTO_MANA_TRIPLE  = 35;
     private static final int COSTO_MANA_SUPREMO = 60;
+    private static final int REGENERACION       = 25;
 
     private int mana;
-    private final int regeneracionMana;
 
     public Arquera() {
         super("Arquera", 110, 25, 5, 15, 1.0);
         Tienda.getInventario().aplicarEquipoA(this);
-
         mana = 100;
-        regeneracionMana = 15;
     }
 
+    @Override
     public int getMana() { return mana; }
 
+    @Override
     public void regenerarMana() {
-        mana = Math.min(100, mana + regeneracionMana);
+        mana = Math.min(100, mana + REGENERACION);
     }
 
     @Override
@@ -39,11 +39,11 @@ public class Arquera extends Personaje {
         if (index == 0) {
             if (mana < COSTO_MANA_TRIPLE) return -1;
             mana -= COSTO_MANA_TRIPLE;
-            return (int) (calcularDanoFinal() * 1.3);
+            return (int)(calcularDanoFinal() * 1.3);
         } else {
             if (mana < COSTO_MANA_SUPREMO) return -1;
             mana -= COSTO_MANA_SUPREMO;
-            return (int) (calcularDanoFinal() * 2.2);
+            return (int)(calcularDanoFinal() * 2.2);
         }
     }
 }

@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class Tienda {
 
-    private static int oro = 30000;
+    private static int oro = 0;
     private static final Inventario inventario = new Inventario();
     private static final Set<Item> equipoComprado = new HashSet<>();
 
@@ -22,16 +22,12 @@ public class Tienda {
 
     private Tienda() {}
 
-    public static List<Item> getCatalogo() {
-        return catalogo;
-    }
+    public static List<Item> getCatalogo() { return catalogo; }
+    public static int getOro() { return oro; }
+    public static Inventario getInventario() { return inventario; }
 
-    public static int getOro() {
-        return oro;
-    }
-
-    public static Inventario getInventario() {
-        return inventario;
+    public static void agregarOro(int cantidad) {
+        oro += cantidad;
     }
 
     public static boolean yaComprado(Item item) {
@@ -39,12 +35,8 @@ public class Tienda {
     }
 
     public static boolean comprar(Item item) {
-        if (!item.esConsumible() && yaComprado(item)) {
-            return false;
-        }
-        if (oro < item.getPrecio()) {
-            return false;
-        }
+        if (!item.esConsumible() && yaComprado(item)) return false;
+        if (oro < item.getPrecio()) return false;
 
         oro -= item.getPrecio();
 
