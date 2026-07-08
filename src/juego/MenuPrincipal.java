@@ -39,7 +39,7 @@ public class MenuPrincipal extends JFrame {
         salir.setContentAreaFilled(false);
         salir.setBorderPainted(false);
 
-
+        // NuevaPartida 
         nuevaPartida.addActionListener(e -> {
 
             new SeleccionPersonaje();
@@ -47,11 +47,6 @@ public class MenuPrincipal extends JFrame {
             dispose();
 
         });
-
-
-            new PantallaCombate(null);
-
-            dispose();
 
         // CargarPartida
         cargarPartida.addActionListener(e -> {
@@ -68,7 +63,6 @@ public class MenuPrincipal extends JFrame {
 
                 JOptionPane.showMessageDialog(this, "No hay ninguna partida guardada todavía.");
             }
-
 
         });
 

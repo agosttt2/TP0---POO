@@ -33,19 +33,9 @@ public class SeleccionPersonaje extends JFrame {
         fondo.setLayout(null);
         fondo.setBounds(0, 0, screenW, screenH);
 
-
-        
+       
         int offsetX = 250; 
         int offsetY = -160;
-
-    
-
-        int offsetX1 = 250; 
-        int offsetY1 = -160;
-
-
-        int textOffsetX = 0; 
-        int textOffsetY = -150; 
 
         JLabel titulo = new JLabel("ELIGE TU PERSONAJE", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, (int)(screenH * 0.05)));
@@ -55,15 +45,8 @@ public class SeleccionPersonaje extends JFrame {
         int imgX = (screenW - imgSize) / 2;
         int imgY = (screenH - imgSize) / 2 - 50; 
 
-
-        
         imagenPersonaje = new JLabel("", SwingConstants.CENTER);
-        imagenPersonaje.setBounds(imgX + offsetX1, imgY + offsetY, imgSize, imgSize);
-
-       
-
-        imagenPersonaje = new JLabel("", SwingConstants.CENTER);
-        imagenPersonaje.setBounds(imgX + offsetX1, imgY + offsetY, imgSize, imgSize);
+        imagenPersonaje.setBounds(imgX + offsetX, imgY + offsetY, imgSize, imgSize);
 
         int btnSize = (int)(screenH * 0.08);
         JButton izquierda = crearBotonEstilo("<");
@@ -72,17 +55,21 @@ public class SeleccionPersonaje extends JFrame {
         JButton derecha = crearBotonEstilo(">");
         derecha.setBounds(imgX + imgSize + 40, imgY + (imgSize / 2) - (btnSize / 2), btnSize, btnSize);
 
-
         nombrePersonaje = new JLabel("", SwingConstants.CENTER);
         nombrePersonaje.setFont(new Font("Arial", Font.BOLD, (int)(screenH * 0.04)));
         nombrePersonaje.setForeground(new Color(212, 175, 55));
-        nombrePersonaje.setBounds(imgX + textOffsetX, imgY + imgSize + 10 + textOffsetY, imgSize, (int)(screenH * 0.06));
 
         int btnW = (int)(screenW * 0.12);
         int btnH = (int)(screenH * 0.06);
         int gap = 30;
         int btnStartY = (int)(screenH * 0.85);
         int startX = (screenW - ((btnW * 2) + gap)) / 2;
+
+        
+        int nombreH = (int)(screenH * 0.06);
+        int margenNombre = (int)(screenH * 0.03);
+        int nombreY = btnStartY - margenNombre - nombreH;
+        nombrePersonaje.setBounds(0, nombreY, screenW, nombreH);
 
         JButton tienda = crearBotonEstilo("TIENDA");
         tienda.setBounds(startX, btnStartY, btnW, btnH);

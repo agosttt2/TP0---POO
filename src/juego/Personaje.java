@@ -26,7 +26,6 @@ public abstract class Personaje {
         this.estado           = "VIVO";
     }
 
-
     public int calcularDanoFinal() {
         return (int)(ataqueBase * multiplicadorArma);
     }
@@ -95,16 +94,13 @@ public abstract class Personaje {
         return vida > 0;
     }
 
-
     public abstract String[] getNombresHabilidades();
     public abstract String getSpriteHabilidad(int index);
     public abstract int ejecutarHabilidad(int index);
 
-
     public boolean habilidadEsCuracion(int index) {
         return false;
     }
-
 
     public abstract int usarHabilidad();
 }

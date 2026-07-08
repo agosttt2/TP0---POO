@@ -1,32 +1,41 @@
 package juego;
 
+import juego.combate.Combate;
+import juego.combate.ResultadoHabilidad;
+import juego.combate.ResultadoTurnoJefe;
+import juego.item.Consumible;
+import juego.item.Tienda;
+import juego.modelo.Arquera;
+import juego.modelo.Caballero;
+import juego.modelo.Curandera;
+import juego.modelo.Jefe;
+import juego.modelo.Mago;
+import juego.modelo.Personaje;
+import juego.persistencia.DatosPartidaGuardada;
+import juego.persistencia.GuardadoPartida;
+
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PantallaCombate extends JFrame {
 
-    private Personaje[] personajesObjeto = {
-            new Mago(),
-            new Caballero(),
-            new Arquera(),
-            new Curandera()
-    };
-
-    private int personajeActual = 0;
-    private int turnosJefe = 0;
-    private Jefe jefe = new Jefe();
+    private final List<Personaje> personajes = new ArrayList<>();
+    private final Jefe jefe = new Jefe();
+    private final Combate combate;
 
     private JLabel jefeLabel;
     private JLabel lblVidaJefe;
-    private JLabel[] personajeLabels = new JLabel[4];
-    private JLabel[] panelNombre     = new JLabel[4];
-    private JLabel[] panelVida       = new JLabel[4];
+    private JLabel[] personajeLabels;
+    private JLabel[] panelNombre;
+    private JLabel[] panelVida;
 
-    private int anchoParty = 320;
-    private int altoParty  = 320;
-    private int tamanoJefe = 530;
+    private final int anchoParty = 320;
+    private final int altoParty  = 320;
+    private final int tamanoJefe = 530;
+
+    private JButton btnAtacar, btnDefender, btnHabilidad, btnObjetos, btnSalir, btnGuardar;
 
     public PantallaCombate(String personajeInicial) {
         this(personajeInicial, false);
@@ -34,17 +43,25 @@ public class PantallaCombate extends JFrame {
 
     public PantallaCombate(String personajeInicial, boolean cargarPartida) {
 
+        personajes.add(new Mago());
+        personajes.add(new Caballero());
+        personajes.add(new Arquera());
+        personajes.add(new Curandera());
+
+        personajeLabels = new JLabel[personajes.size()];
+        panelNombre = new JLabel[personajes.size()];
+        panelVida = new JLabel[personajes.size()];
+
+        combate = new Combate(personajes, jefe);
+
         if (cargarPartida) {
-            cargarPartida(); 
-        } else {
-            if (personajeInicial.equals("Mago"))      personajeActual = 0;
-            if (personajeInicial.equals("Caballero")) personajeActual = 1;
-            if (personajeInicial.equals("Arquera"))   personajeActual = 2;
-            if (personajeInicial.equals("Curandera")) personajeActual = 3;
+            aplicarDatosGuardados();
         }
 
+        combate.iniciarRonda();
+
         setTitle("EL LEGADO DE LA SANGRE - Combate");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setUndecorated(true);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -52,51 +69,41 @@ public class PantallaCombate extends JFrame {
         int sw = screenSize.width;
         int sh = screenSize.height;
 
-        JLabel fondo = new JLabel(
-                escalarImagen("imagenes/fondoCombate.png", sw, sh));
+        JLabel fondo = new JLabel(escalarImagen("imagenes/fondoCombate.png", sw, sh));
         fondo.setLayout(null);
 
+        int[] posX = {
+                (int) (sw * 0.28),
+                (int) (sw * 0.27),
+                (int) (sw * 0.27),
+                (int) (sw * 0.27)
+        };
+        int[] posY = {
+                (int) (sh * 0.11),
+                (int) (sh * 0.20),
+                (int) (sh * 0.30),
+                (int) (sh * 0.45)
+        };
 
-     int[] posX = {
-         (int)(sw * 0.28),
-         (int)(sw * 0.27), 
-         (int)(sw * 0.27), 
-         (int)(sw * 0.27)  
-     };
+        for (int i = 0; i < personajes.size(); i++) {
+            personajeLabels[i] = new JLabel();
+            personajeLabels[i].setBounds(posX[i], posY[i], anchoParty, altoParty);
+            fondo.add(personajeLabels[i]);
+        }
 
-     int[] posY = {
-         (int)(sh * 0.11), 
-         (int)(sh * 0.20), 
-         (int)(sh * 0.30), 
-         (int)(sh * 0.45),
-     };
-
-     for (int i = 0; i < personajesObjeto.length; i++) {
-         personajeLabels[i] = new JLabel();
-
-         personajeLabels[i].setBounds(
-                 posX[i],
-                 posY[i],
-                 anchoParty,
-                 altoParty
-         );
-
-         fondo.add(personajeLabels[i]);
-     }
-
-     fondo.setComponentZOrder(personajeLabels[0], 3);
-     fondo.setComponentZOrder(personajeLabels[1], 2);
-     fondo.setComponentZOrder(personajeLabels[2], 1); 
-     fondo.setComponentZOrder(personajeLabels[3], 0); 
+        fondo.setComponentZOrder(personajeLabels[0], 3);
+        fondo.setComponentZOrder(personajeLabels[1], 2);
+        fondo.setComponentZOrder(personajeLabels[2], 1);
+        fondo.setComponentZOrder(personajeLabels[3], 0);
 
         jefeLabel = new JLabel();
-        jefeLabel.setBounds((int)(sw * 0.62), (int)(sh * 0.08), tamanoJefe, tamanoJefe);
+        jefeLabel.setBounds((int) (sw * 0.62), (int) (sh * 0.08), tamanoJefe, tamanoJefe);
         fondo.add(jefeLabel);
 
         lblVidaJefe = new JLabel();
         lblVidaJefe.setForeground(Color.RED);
         lblVidaJefe.setFont(new Font("Arial", Font.BOLD, 22));
-        lblVidaJefe.setBounds((int)(sw * 0.62), (int)(sh * 0.03), 300, 30);
+        lblVidaJefe.setBounds((int) (sw * 0.62), (int) (sh * 0.03), 300, 30);
         fondo.add(lblVidaJefe);
 
         JPanel barraInferior = crearBarraInferior(sw);
@@ -105,18 +112,19 @@ public class PantallaCombate extends JFrame {
 
         setContentPane(fondo);
         actualizarPantalla();
+        procesarTurnosAutomaticos();
         setVisible(true);
     }
 
-    private void regenerarManaDescanso(int excluido) {
-        for (int i = 0; i < personajesObjeto.length; i++) {
-            if (i != excluido && personajesObjeto[i].estaVivo()) {
-                Personaje p = personajesObjeto[i];
-                if (p instanceof Mago) ((Mago) p).regenerarMana();
-                else if (p instanceof Caballero) ((Caballero) p).regenerarMana();
-                else if (p instanceof Arquera) ((Arquera) p).regenerarMana();
-                else if (p instanceof Curandera) ((Curandera) p).regenerarMana();
-            }
+    private void aplicarDatosGuardados() {
+        DatosPartidaGuardada datos = GuardadoPartida.cargar();
+        GuardadoPartida.restaurarTienda(datos);
+
+        jefe.restaurarEstado(datos.vidaJefe, datos.estadoJefe, jefe.getNivel(), jefe.getExperiencia());
+
+        for (int i = 0; i < personajes.size() && i < datos.personajes.size(); i++) {
+            DatosPartidaGuardada.DatosPersonaje dp = datos.personajes.get(i);
+            personajes.get(i).restaurarEstado(dp.vida, dp.estado, dp.nivel, dp.experiencia);
         }
     }
 
@@ -127,8 +135,7 @@ public class PantallaCombate extends JFrame {
         barra.setOpaque(true);
         barra.setBorder(BorderFactory.createLineBorder(new Color(212, 175, 55), 3));
 
-        for (int i = 0; i < personajesObjeto.length; i++) {
-
+        for (int i = 0; i < personajes.size(); i++) {
             JPanel tarjeta = new JPanel(null);
             tarjeta.setOpaque(false);
             tarjeta.setBounds(20 + i * 250, 10, 240, 120);
@@ -149,307 +156,236 @@ public class PantallaCombate extends JFrame {
             barra.add(tarjeta);
         }
 
-        JButton atacar   = crearBoton("ATACAR",    sw - 350, 20, 150, 40);
-        JButton defender = crearBoton("DEFENDER",  sw - 190, 20, 150, 40);
-        JButton habil    = crearBoton("HABILIDAD", sw - 350, 70, 150, 40);
-        JButton salir    = crearBoton("SALIR",     sw - 190, 70, 150, 40);
-        JButton guardar  = crearBoton("GUARDAR",   sw - 510, 20, 150, 40);
-        
-        atacar.addActionListener(e -> {
-            Personaje p = personajesObjeto[personajeActual];
+        btnAtacar   = crearBoton("ATACAR",    sw - 510, 20, 150, 40);
+        btnDefender = crearBoton("DEFENDER",  sw - 350, 20, 150, 40);
+        btnHabilidad= crearBoton("HABILIDAD", sw - 190, 20, 150, 40);
+        btnObjetos  = crearBoton("OBJETOS",   sw - 510, 70, 150, 40);
+        btnGuardar  = crearBoton("GUARDAR",   sw - 350, 70, 150, 40);
+        btnSalir    = crearBoton("SALIR",     sw - 190, 70, 150, 40);
 
-            personajeLabels[personajeActual].setIcon(
-                    escalarImagen("imagenes/" + p.getNombre().toLowerCase() + "_ataque.png",
-                            anchoParty, altoParty));
-
-            int dmg = p.calcularDanoFinal();
-            jefe.recibirDanio(dmg);
-
-            JOptionPane.showMessageDialog(
-                    this, p.getNombre() + " hizo " + dmg + " de daño al Jefe!");
-
-            p.estado = "VIVO";
-
-            Timer t = new Timer(800, ev -> finalizarTurno());
-            t.setRepeats(false);
-            t.start();
-        });
-
-        defender.addActionListener(e -> {
-            Personaje p = personajesObjeto[personajeActual];
-
-            personajeLabels[personajeActual].setIcon(
-                    escalarImagen("imagenes/" + p.getNombre().toLowerCase() + "_bloquear.png",
-                            anchoParty, altoParty));
-
-            p.estado = "DEFENDIENDO";
-
-            JOptionPane.showMessageDialog(
-                    this, p.getNombre() + " está defendiendo!");
-
-            Timer t = new Timer(800, ev -> finalizarTurno());
-            t.setRepeats(false);
-            t.start();
-        });
-
-        habil.addActionListener(e -> {
-            Personaje p = personajesObjeto[personajeActual];
-            String[] habs = p.getNombresHabilidades();
-           
-            String elegida = (String) JOptionPane.showInputDialog(
-                    this,
-                    "Selecciona una habilidad:",
-                    "Habilidades de " + p.getNombre(),
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    habs,
-                    habs[0]);
-
-            if (elegida != null) {
-                int idx = 0;
-                for (int i = 0; i < habs.length; i++) {
-                    if (habs[i].equals(elegida)) {
-                        idx = i;
-                    }
-                }
-
-                int valor = p.ejecutarHabilidad(idx);
-                
-                if (valor == 0) {
-                    return; 
-                }
-
-                personajeLabels[personajeActual].setIcon(
-                        escalarImagen(p.getSpriteHabilidad(idx), anchoParty, altoParty));
-
-                if (p.habilidadEsCuracion(idx)) {
-                    curarAliadoAleatorio(valor);
-                } else {
-                    jefe.recibirDanio(valor);
-                    JOptionPane.showMessageDialog(
-                            this, p.getNombre() + " usó " + elegida +
-                            " e hizo " + valor + " de daño!");
-                }
-
-                p.estado = "VIVO";
-
-                Timer t = new Timer(1000, ev -> finalizarTurno());
-                t.setRepeats(false);
-                t.start();
-            }
-        });
-
-        salir.addActionListener(e -> System.exit(0));
-        
-        guardar.addActionListener(e -> {
-            guardarPartida();
+        btnAtacar.addActionListener(e -> onAtacar());
+        btnDefender.addActionListener(e -> onDefender());
+        btnHabilidad.addActionListener(e -> onHabilidad());
+        btnObjetos.addActionListener(e -> onObjetos());
+        btnSalir.addActionListener(e -> System.exit(0));
+        btnGuardar.addActionListener(e -> {
+            GuardadoPartida.guardar(combate);
             JOptionPane.showMessageDialog(this, "Partida guardada correctamente");
         });
-        
-        barra.add(atacar);
-        barra.add(defender);
-        barra.add(habil);
-        barra.add(salir);
-        barra.add(guardar);
+
+        barra.add(btnAtacar);
+        barra.add(btnDefender);
+        barra.add(btnHabilidad);
+        barra.add(btnObjetos);
+        barra.add(btnGuardar);
+        barra.add(btnSalir);
         return barra;
     }
-   
-    private void finalizarTurno() {
 
-        if (!jefe.estaVivo()) {
+    private Personaje personajeEnTurno() {
+        return combate.turnoActual();
+    }
 
+    private void onAtacar() {
+        Personaje p = personajeEnTurno();
+        personajeLabels[personajes.indexOf(p)].setIcon(
+                escalarImagen("imagenes/" + p.getNombre().toLowerCase() + "_ataque.png", anchoParty, altoParty));
+
+        int danio = combate.atacar(p, jefe);
+        JOptionPane.showMessageDialog(this, p.getNombre() + " hizo " + danio + " de dano al Jefe!");
+
+        finalizarTurnoDelJugador();
+    }
+
+    private void onDefender() {
+        Personaje p = personajeEnTurno();
+        p.defender();
+        personajeLabels[personajes.indexOf(p)].setIcon(
+                escalarImagen("imagenes/" + p.getNombre().toLowerCase() + "_bloquear.png", anchoParty, altoParty));
+
+        JOptionPane.showMessageDialog(this, p.getNombre() + " esta defendiendo!");
+        finalizarTurnoDelJugador();
+    }
+
+    private void onHabilidad() {
+        Personaje p = personajeEnTurno();
+        String[] habs = p.getNombresHabilidades();
+
+        String elegida = (String) JOptionPane.showInputDialog(
+                this, "Selecciona una habilidad:", "Habilidades de " + p.getNombre(),
+                JOptionPane.QUESTION_MESSAGE, null, habs, habs[0]);
+
+        if (elegida == null) return;
+
+        int idx = 0;
+        for (int i = 0; i < habs.length; i++) {
+            if (habs[i].equals(elegida)) idx = i;
+        }
+
+        ResultadoHabilidad resultado = combate.usarHabilidad(p, idx);
+
+        if (resultado.manaInsuficiente()) {
+            JOptionPane.showMessageDialog(this, "No tenes suficiente mana para esa habilidad.");
+            return; // no se consume el turno
+        }
+
+        personajeLabels[personajes.indexOf(p)].setIcon(
+                escalarImagen(p.getSpriteHabilidad(idx), anchoParty, altoParty));
+
+        if (resultado.esCuracion()) {
+            if (resultado.getObjetivo() != null) {
+                JOptionPane.showMessageDialog(this,
+                        p.getNombre() + " curo a " + resultado.getObjetivo().getNombre() +
+                        " por " + resultado.getValor() + " HP!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    p.getNombre() + " uso " + elegida + " e hizo " + resultado.getValor() + " de dano!");
+        }
+
+        finalizarTurnoDelJugador();
+    }
+
+    private void onObjetos() {
+        List<Consumible> consumibles = Tienda.getInventario().getConsumibles();
+        if (consumibles.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No tenes objetos para usar. Comprá pociones en la tienda!");
+            return;
+        }
+
+        String[] nombres = consumibles.stream().map(Consumible::getNombre).distinct().toArray(String[]::new);
+        String elegido = (String) JOptionPane.showInputDialog(
+                this, "Elegi un objeto:", "Objetos", JOptionPane.QUESTION_MESSAGE, null, nombres, nombres[0]);
+        if (elegido == null) return;
+
+        Consumible consumible = consumibles.stream().filter(c -> c.getNombre().equals(elegido)).findFirst().orElse(null);
+        if (consumible == null) return;
+
+        Personaje objetivo = personajeEnTurno();
+        Tienda.getInventario().usarConsumible(consumible, objetivo);
+        JOptionPane.showMessageDialog(this, objetivo.getNombre() + " uso " + elegido + "!");
+
+        finalizarTurnoDelJugador();
+    }
+
+    private void finalizarTurnoDelJugador() {
+        Personaje personajeQueActuo = personajeEnTurno();
+        combate.avanzarTurno();
+        regenerarManaDescanso(personajeQueActuo);
+        actualizarPantalla();
+
+        if (verificarFinDeCombate()) return;
+
+        procesarTurnosAutomaticos();
+    }
+
+    private void procesarTurnosAutomaticos() {
+        while (true) {
+            if (!combate.hayTurnoPendiente()) {
+                combate.iniciarRonda();
+                if (!combate.hayTurnoPendiente()) {
+                    return;
+                }
+            }
+
+            if (combate.esTurnoDeJefe()) {
+                ejecutarTurnoJefeAutomatico();
+                combate.avanzarTurno();
+                actualizarPantalla();
+                if (verificarFinDeCombate()) return;
+                continue;
+            }
+
+            actualizarPantalla();
+            return;
+        }
+    }
+
+    private void regenerarManaDescanso(Personaje excluido) {
+        for (Personaje personaje : personajes) {
+            if (personaje != excluido && personaje.estaVivo()) {
+                if (personaje instanceof Mago) ((Mago) personaje).regenerarMana();
+                if (personaje instanceof Caballero) ((Caballero) personaje).regenerarMana();
+                if (personaje instanceof Arquera) ((Arquera) personaje).regenerarMana();
+                if (personaje instanceof Curandera) ((Curandera) personaje).regenerarMana();
+            }
+        }
+    }
+
+    private void ejecutarTurnoJefeAutomatico() {
+        ResultadoTurnoJefe resultado = combate.ejecutarTurnoJefe();
+
+        if (resultado.curo()) {
+            jefeLabel.setIcon(escalarImagen("imagenes/jefe_curacion.png", tamanoJefe, tamanoJefe));
+            JOptionPane.showMessageDialog(this, "El Jefe se regenera " + resultado.getValor() + " HP!");
+        } else {
+            jefeLabel.setIcon(escalarImagen("imagenes/jefe_ataque.png", tamanoJefe, tamanoJefe));
+            if (resultado.getObjetivo() != null) {
+                JOptionPane.showMessageDialog(this,
+                        "El Jefe ataca a " + resultado.getObjetivo().getNombre() +
+                        " por " + resultado.getValor() + " de dano.");
+            }
+        }
+    }
+
+    private boolean verificarFinDeCombate() {
+        if (combate.jefeDerrotado()) {
             jefeLabel.setIcon(escalarImagen("imagenes/jefe_derrota.png", tamanoJefe, tamanoJefe));
 
-            for (int i = 0; i < personajesObjeto.length; i++) {
-                if (personajesObjeto[i].estaVivo()) {
-                    personajesObjeto[i].ganarExperiencia(100);
-                    personajeLabels[i].setIcon(escalarImagen(
-                            "imagenes/" + personajesObjeto[i].getNombre().toLowerCase() + "_victoria.png",
-                            anchoParty, altoParty));
+            List<Personaje> subieronNivel = combate.otorgarExperienciaPorVictoria(100);
+            if (!subieronNivel.isEmpty()) {
+                StringBuilder sb = new StringBuilder("Subieron de nivel!\n");
+                for (Personaje p : subieronNivel) {
+                    sb.append(p.getNombre()).append(" ahora es nivel ").append(p.getNivel()).append("\n");
                 }
+                JOptionPane.showMessageDialog(this, sb.toString());
             }
 
-            JOptionPane.showMessageDialog(this, "¡Victoria!");
+            JOptionPane.showMessageDialog(this, "VICTORIA!");
             new PantallaVictoria();
             dispose();
-            return;
+            return true;
         }
 
-        turnoJefe();
-
-        if (!verificarDerrota()) {
-            regenerarManaDescanso(personajeActual); 
-            siguientePersonaje();
-            actualizarPantalla();
-        }
-    }
-
-    private boolean verificarDerrota() {
-
-        for (int i = 0; i < personajesObjeto.length; i++) {
-            if (personajesObjeto[i].estaVivo()) {
-                return false;
-            }
+        if (combate.todosLosAliadosDerrotados()) {
+            JOptionPane.showMessageDialog(this, "DERROTA!");
+            new PantallaDerrota();
+            dispose();
+            return true;
         }
 
-        JOptionPane.showMessageDialog(this, "¡DERROTA!");
-        new PantallaDerrota();
-        dispose();
-        return true;
-    }
-
-    private void turnoJefe() {
-
-        turnosJefe++;
-
-        int turnosParaCurar = 3 + (int)(Math.random() * 3);
-
-        if (turnosJefe >= turnosParaCurar) {
-
-            jefeLabel.setIcon(escalarImagen("imagenes/jefe_curacion.png", tamanoJefe, tamanoJefe));
-
-            int heal = 50;
-            jefe.curar(heal);
-
-            JOptionPane.showMessageDialog(
-                    this, "¡El Jefe se regenera " + heal + " HP!");
-
-            turnosJefe = 0;
-
-        } else {
-
-            jefeLabel.setIcon(escalarImagen("imagenes/jefe_ataque.png", tamanoJefe, tamanoJefe));
-
-            int vivosCount = 0;
-            for (int i = 0; i < personajesObjeto.length; i++) {
-                if (personajesObjeto[i].estaVivo()) {
-                    vivosCount++;
-                }
-            }
-
-            if (vivosCount > 0) {
-
-                int objetivo = (int)(Math.random() * vivosCount);
-                int contador = 0;
-
-                for (int i = 0; i < personajesObjeto.length; i++) {
-
-                    if (personajesObjeto[i].estaVivo()) {
-
-                        if (contador == objetivo) {
-
-                            Personaje obj = personajesObjeto[i];
-                            
-                            int danioBase = jefe.calcularDanoFinal(); 
-                            int danio;
-
-                            danio = Math.max(1, danioBase - obj.getDefensa());
-
-                            if (obj.estado.equals("DEFENDIENDO")) {
-                                danio = Math.max(1, danio / 2);
-                            }
-
-                            obj.recibirDanio(danio);
-
-                            JOptionPane.showMessageDialog(
-                                    this,
-                                    "El Jefe ataca a " + obj.getNombre() +
-                                    " por " + danio + " de daño.");
-
-                            obj.estado = "VIVO";
-                            break;
-                        }
-
-                        contador++;
-                    }
-                }
-            }
-        }
-    }
-
-    private void curarAliadoAleatorio(int cantidad) {
-
-        int vivosCount = 0;
-        for (int i = 0; i < personajesObjeto.length; i++) {
-            if (personajesObjeto[i].estaVivo()) {
-                vivosCount++;
-            }
-        }
-
-        if (vivosCount == 0) {
-            return;
-        }
-
-        int objetivo = (int)(Math.random() * vivosCount);
-        int contador = 0;
-
-        for (int i = 0; i < personajesObjeto.length; i++) {
-
-            if (personajesObjeto[i].estaVivo()) {
-
-                if (contador == objetivo) {
-                    personajesObjeto[i].curar(cantidad);
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "La Curandera curó a " + personajesObjeto[i].getNombre() +
-                            " por " + cantidad + " HP!");
-                    break;
-                }
-
-                contador++;
-            }
-        }
-    }
-
-    private void siguientePersonaje() {
-        do {
-            personajeActual = (personajeActual + 1) % personajesObjeto.length;
-        } while (!personajesObjeto[personajeActual].estaVivo());
+        return false;
     }
 
     private void actualizarPantalla() {
-
-        for (int i = 0; i < personajesObjeto.length; i++) {
-
-            Personaje p = personajesObjeto[i];
-            
-            String estadoStr = p.estaVivo() ? "VIVO" : "DERROTADO";
+        for (int i = 0; i < personajes.size(); i++) {
+            Personaje p = personajes.get(i);
+            String estadoStr = p.estaVivo() ? p.getEstado().name() : "DERROTADO";
             String manaTexto = "";
-            
-            if (p instanceof Mago) {
-                manaTexto = "Mana: " + ((Mago) p).getMana() + "<br>";
-            } else if (p instanceof Caballero) {
-                manaTexto = "Mana: " + ((Caballero) p).getMana() + "<br>";
-            } else if (p instanceof Arquera) {
-                manaTexto = "Mana: " + ((Arquera) p).getMana() + "<br>";
-            } else if (p instanceof Curandera) {
-                manaTexto = "Mana: " + ((Curandera) p).getMana() + "<br>";
-            }
+            if (p instanceof Caballero) manaTexto = "Mana: " + ((Caballero) p).getMana() + "<br>";
+            if (p instanceof Mago) manaTexto = "Mana: " + ((Mago) p).getMana() + "<br>";
+            if (p instanceof Arquera) manaTexto = "Mana: " + ((Arquera) p).getMana() + "<br>";
+            if (p instanceof Curandera) manaTexto = "Mana: " + ((Curandera) p).getMana() + "<br>";
 
-            if (i == personajeActual) {
-                panelNombre[i].setText("▶ " + p.getNombre());
-            } else {
-                panelNombre[i].setText(p.getNombre());
-            }
+            boolean esElTurno = combate.hayTurnoPendiente() && combate.turnoActual() == p;
+            panelNombre[i].setText((esElTurno ? "> " : "") + p.getNombre());
 
             panelVida[i].setText(
                     "<html>" +
-                    "HP: "     + p.getVida()        + "/" + p.getVidaMaxima()          + "<br>" +
-                    "ATQ: "    + p.calcularDanoFinal() + "  DEF: " + p.getDefensa()    + "<br>" +
-                    "VEL: "    + p.getVelocidad()    + "  Nv: " + p.getNivel()         + "<br>" +
+                    "HP: " + p.getVida() + "/" + p.getVidaMaxima() + "<br>" +
+                    "ATQ: " + p.calcularDanoFinal() + "  DEF: " + p.getDefensa() + "<br>" +
+                    "VEL: " + p.getVelocidad() + "  Nv: " + p.getNivel() + "<br>" +
                     manaTexto +
-                    "Exp:"    + p.getExperiencia()  + "/" + p.getExperienciaNecesaria() + "<br>" +
-                    "ESTADO: " + estadoStr           +
+                    "Exp:" + p.getExperiencia() + "/" + p.getExperienciaNecesaria() + "<br>" +
+                    "ESTADO: " + estadoStr +
                     "</html>");
 
             if (p.estaVivo()) {
                 personajeLabels[i].setIcon(escalarImagen(
-                        "imagenes/" + p.getNombre().toLowerCase() + "_idle.png",
-                        anchoParty, altoParty));
+                        "imagenes/" + p.getNombre().toLowerCase() + "_idle.png", anchoParty, altoParty));
             } else {
                 personajeLabels[i].setIcon(escalarImagen(
-                        "imagenes/" + p.getNombre().toLowerCase() + "_derrota.png",
-                        anchoParty, altoParty));
+                        "imagenes/" + p.getNombre().toLowerCase() + "_derrota.png", anchoParty, altoParty));
             }
         }
 
@@ -458,6 +394,12 @@ public class PantallaCombate extends JFrame {
         }
 
         lblVidaJefe.setText("HP Jefe: " + jefe.getVida() + "/" + jefe.getVidaMaxima());
+
+        boolean esTurnoDeJugador = combate.hayTurnoPendiente() && !combate.esTurnoDeJefe();
+        btnAtacar.setEnabled(esTurnoDeJugador);
+        btnDefender.setEnabled(esTurnoDeJugador);
+        btnHabilidad.setEnabled(esTurnoDeJugador);
+        btnObjetos.setEnabled(esTurnoDeJugador);
     }
 
     private JButton crearBoton(String texto, int x, int y, int w, int h) {
@@ -466,53 +408,8 @@ public class PantallaCombate extends JFrame {
         b.setBackground(new Color(212, 175, 55));
         return b;
     }
-    
+
     private ImageIcon escalarImagen(String ruta, int w, int h) {
-        return new ImageIcon(
-                new ImageIcon(ruta).getImage()
-                        .getScaledInstance(w, h, Image.SCALE_SMOOTH));
-    }
-
-    private void guardarPartida() {
-        try (PrintWriter pw = new PrintWriter(new FileWriter("partida_guardada.txt"))) {
-
-            pw.println(personajeActual);
-            pw.println(turnosJefe);
-            pw.println(jefe.getVida());
-
-            for (Personaje p : personajesObjeto) {
-                pw.println(p.getNombre() + ";" + p.getVida() + ";" + p.estado);
-            }
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error al guardar la partida");
-        }
-    }
-
-    private void cargarPartida() {
-        try {
-            Scanner lector = new Scanner(new File("partida_guardada.txt"));
-
-            personajeActual = Integer.parseInt(lector.nextLine());
-            turnosJefe = Integer.parseInt(lector.nextLine());
-
-            int vidaJefeGuardada = Integer.parseInt(lector.nextLine());
-            jefe.vida = vidaJefeGuardada;
-
-            for (int i = 0; i < personajesObjeto.length; i++) {
-                String linea = lector.nextLine();
-                String[] partes = linea.split(";");
-
-                personajesObjeto[i].vida = Integer.parseInt(partes[1]);
-                personajesObjeto[i].estado = partes[2];
-            }
-
-            lector.close();
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error al cargar la partida");
-        }
+        return new ImageIcon(new ImageIcon(ruta).getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
     }
 }
